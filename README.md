@@ -1,10 +1,18 @@
 # OtpCore
 HOTP, TOTP, OTP Auth URI, and Base32 .NET Standard library
 
-HOTP and TOTP implementation in C# targeting .NET standard 2.0, compliant with RFC 4226 (HOTP) and
-RFC 6238 (TOTP) and verified against supplied test vectors. The interface includes support for
-multiple algorithms (HMAC-SHA1, HMAC-SHA256, HMAC-SHA384, and HMAC-SHA512), code lengths (6 - 10),
-and an adjustable period, or time step, (1 second - 1 hour) for TOTP.
+HOTP and TOTP implementation in C# targeting .NET standard 2.0, compliant with:
+- (RFC 4226)[https://datatracker.ietf.org/doc/html/rfc4226] (HOTP)
+- (RFC 6238)[https://datatracker.ietf.org/doc/html/rfc6238] (TOTP)
+
+It has been verified against test vectors supplied in the RFCs. The interface includes support for
+multiple algorithms:
+- HMAC-SHA1
+- HMAC-SHA256
+- HMAC-SHA384
+- HMAC-SHA512
+
+It supports variable code lengths (6 - 10) and an adjustable period, or time step, (1 second - 1 hour) for TOTP.
 
 The reason for creating this library was to fetch multiple HOTP counters or a TOTP time range in
 a single call.
@@ -12,9 +20,11 @@ a single call.
 A parser for OTP Auth URIs is also included that conforms to the documentation found at:
 https://github.com/google/google-authenticator/wiki/Key-Uri-Format.
 
-This implementation also includes a Base32 encoder and decoder. It is compliant with RFC 4648,
-using the standard alphabet from section 6, and has been tested against the test vectors from
-section 10.
+This implementation also includes a Base32 encoder and decoder. It is compliant with
+(RFC 4648)[https://datatracker.ietf.org/doc/html/rfc4648],
+using the standard alphabet from (section 6)[https://datatracker.ietf.org/doc/html/rfc4648#section-6],
+and has been tested against the test vectors from
+(section 10)[https://datatracker.ietf.org/doc/html/rfc4648#section-10].
 
 # Examples
 OtpCore is just a static utility library with static methods.  It does not track counters or
