@@ -31,6 +31,7 @@ namespace OtpCore
                     TimeStamp = DateTimeOffset.FromUnixTimeSeconds(intervalStart),
                     UnixTime = intervalStart,
                     Counter = counter,
+                    Period = period,
                     Code = code
                 });
             }
