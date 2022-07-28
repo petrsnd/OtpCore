@@ -1,7 +1,5 @@
 # OtpCore
-HOTP, TOTP, OTP Auth URI, and Base32 .NET Standard library
-
-HOTP and TOTP implementation in C# targeting .NET standard 2.0, compliant with:
+HOTP, TOTP, OTP Auth URI, and Base32 implementation in C# targeting .NET standard 2.0, compliant with:
 - (RFC 4226)[https://datatracker.ietf.org/doc/html/rfc4226] (HOTP)
 - (RFC 6238)[https://datatracker.ietf.org/doc/html/rfc6238] (TOTP)
 
@@ -17,7 +15,7 @@ It supports variable code lengths (6 - 10) and an adjustable period, or time ste
 The reason for creating this library was to fetch multiple HOTP counters or a TOTP time range in
 a single call.
 
-A parser for OTP Auth URIs is also included that conforms to the documentation found at:
+A parser for OTP Auth URIs (otpauth://) is also included that conforms to the documentation found at:
 https://github.com/google/google-authenticator/wiki/Key-Uri-Format.
 
 This implementation also includes a Base32 encoder and decoder. It is compliant with
