@@ -68,7 +68,7 @@ var range = TimeSpan.FromSeconds(120); // two minutes worth of codes
 var totpValues = Totp.GetTotpRange(secret, DateTimeOffset.Now, range, period, OtpHmacAlgorithm.HmacSha1, digits);
 ```
 
-HOTP Values format: [HotpValue.cs](OtpCore/HotpValue.cs)
-TOTP Values format: [TotpValue.cs](OtpCore/TotpValue.cs)
+- HOTP Values format: [HotpValue.cs](OtpCore/HotpValue.cs)
+- TOTP Values format: [TotpValue.cs](OtpCore/TotpValue.cs)
 
 It's free. Enjoy!
