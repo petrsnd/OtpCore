@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace OtpCore
 {
@@ -14,6 +15,34 @@ namespace OtpCore
         {
             var unixTime = time.ToUniversalTime().ToUnixTimeSeconds();
             return GetTotpCode(secret, unixTime, period, algorithm, digits);
+        }
+
+        public static TotpValue[] GetTotpRange(byte[] secret, long unixTime, int rangeSeconds, int period,
+            OtpHmacAlgorithm algorithm, int digits)
+        {
+            var totpValues = new List<TotpValue>();
+            for (var i = unixTime; i <= unixTime + rangeSeconds; i += period)
+            {
+                var counter = i / period;
+                var code = Hotp.GetHotpCode(secret, counter, algorithm, digits);
+                var intervalStart = counter * period;
+                totpValues.Add(new TotpValue
+                {
+                    TimeStamp = DateTimeOffset.FromUnixTimeSeconds(intervalStart),
+                    UnixTime = intervalStart,
+                    Counter = counter,
+                    Code = code
+                });
+            }
+            return totpValues.ToArray();
+        }
+
+        public static TotpValue[] GetTotpRange(byte[] secret, DateTimeOffset time, TimeSpan range, int period,
+            OtpHmacAlgorithm algorithm, int digits)
+        {
+            var unixTime = time.ToUniversalTime().ToUnixTimeSeconds();
+            var rangeSeconds = Convert.ToInt32(range.TotalSeconds);
+            return GetTotpRange(secret, unixTime, rangeSeconds, period, algorithm, digits);
         }
     }
 }
