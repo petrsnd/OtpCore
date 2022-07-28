@@ -190,5 +190,33 @@ namespace TestOtpCore
             Assert.Equal("KRUGS4ZANFZSAYJAOJSWC3DMPEQGY33OM4QHIZLTOQ======",
                 Utilities.Base32Encode(Encoding.ASCII.GetBytes("This is a really long test"), true));
         }
+
+        [Fact]
+        public void Base32Decode()
+        {
+            // Test vectors from RFC 4648
+            Assert.Equal(Encoding.ASCII.GetBytes(""), Utilities.Base32Decode(""));
+            Assert.Equal(Encoding.ASCII.GetBytes("f"), Utilities.Base32Decode("MY======"));
+            Assert.Equal(Encoding.ASCII.GetBytes("fo"), Utilities.Base32Decode("MZXQ===="));
+            Assert.Equal(Encoding.ASCII.GetBytes("foo"), Utilities.Base32Decode("MZXW6==="));
+            Assert.Equal(Encoding.ASCII.GetBytes("foob"), Utilities.Base32Decode("MZXW6YQ="));
+            Assert.Equal(Encoding.ASCII.GetBytes("fooba"), Utilities.Base32Decode("MZXW6YTB"));
+            Assert.Equal(Encoding.ASCII.GetBytes("foobar"), Utilities.Base32Decode("MZXW6YTBOI======"));
+
+            // Test vectors from RFC 4648 w/o padding
+            Assert.Equal(Encoding.ASCII.GetBytes(""), Utilities.Base32Decode(""));
+            Assert.Equal(Encoding.ASCII.GetBytes("f"), Utilities.Base32Decode("MY"));
+            Assert.Equal(Encoding.ASCII.GetBytes("fo"), Utilities.Base32Decode("MZXQ"));
+            Assert.Equal(Encoding.ASCII.GetBytes("foo"), Utilities.Base32Decode("MZXW6"));
+            Assert.Equal(Encoding.ASCII.GetBytes("foob"), Utilities.Base32Decode("MZXW6YQ"));
+            Assert.Equal(Encoding.ASCII.GetBytes("fooba"), Utilities.Base32Decode("MZXW6YTB"));
+            Assert.Equal(Encoding.ASCII.GetBytes("foobar"), Utilities.Base32Decode("MZXW6YTBOI"));
+
+            // Online test implementations
+            Assert.Equal(Encoding.ASCII.GetBytes("This is a really long test"),
+                Utilities.Base32Decode("KRUGS4ZANFZSAYJAOJSWC3DMPEQGY33OM4QHIZLTOQ======"));
+            Assert.Equal(Encoding.ASCII.GetBytes("This is a really long test"),
+                Utilities.Base32Decode("KRUGS4ZANFZSAYJAOJSWC3DMPEQGY33OM4QHIZLTOQ"));
+        }
     }
 }

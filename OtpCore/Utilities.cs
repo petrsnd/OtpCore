@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -72,56 +73,59 @@ namespace OtpCore
             return result;
         }
 
-        private static readonly char[] LookupTable =
+        private static readonly char[] LookupEncoding =
         {
             'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U',
             'V', 'W', 'X', 'Y', 'Z', '2', '3', '4', '5', '6', '7'
         };
         public static string Base32Encode(byte[] buffer, bool includePadding = false)
         {
+            if (buffer == null)
+                return "";
+
             var sb = new StringBuilder();
             for (var i = 0; i < buffer.Length; i += 5)
             {
-                sb.Append(LookupTable[buffer[i] >> 3]); // byte0(bits 0 - 4)
+                sb.Append(LookupEncoding[buffer[i] >> 3]); // byte0(bits 0 - 4)
                 if (i + 1 >= buffer.Length)
                 {
-                    sb.Append(LookupTable[(buffer[i] & 0x07) << 2]); // byte0(bits 5 - 7)
+                    sb.Append(LookupEncoding[(buffer[i] & 0x07) << 2]); // byte0(bits 5 - 7)
                     if (includePadding)
                         sb.Append("======");
                 }
                 else
                 {
-                    sb.Append(LookupTable[(buffer[i] & 0x07) << 2 | (buffer[i + 1] >> 6)]); // byte0(bits 5 - 7) + byte1(bits 0 - 1)
-                    sb.Append(LookupTable[(buffer[i + 1] & 0x3f) >> 1]); // byte1(bits 2 - 6)
+                    sb.Append(LookupEncoding[(buffer[i] & 0x07) << 2 | (buffer[i + 1] >> 6)]); // byte0(bits 5 - 7) + byte1(bits 0 - 1)
+                    sb.Append(LookupEncoding[(buffer[i + 1] & 0x3f) >> 1]); // byte1(bits 2 - 6)
                     if (i + 2 >= buffer.Length)
                     {
-                        sb.Append(LookupTable[(buffer[i + 1] & 0x01) << 4]); // byte1(bit 7)
+                        sb.Append(LookupEncoding[(buffer[i + 1] & 0x01) << 4]); // byte1(bit 7)
                         if (includePadding)
                             sb.Append("====");
                     }
                     else
                     {
-                        sb.Append(LookupTable[(buffer[i + 1] & 0x01) << 4 | buffer[i + 2] >> 4]); // byte1(bit 7) + byte2(bits 0 - 3)
+                        sb.Append(LookupEncoding[(buffer[i + 1] & 0x01) << 4 | buffer[i + 2] >> 4]); // byte1(bit 7) + byte2(bits 0 - 3)
                         if (i + 3 >= buffer.Length)
                         {
-                            sb.Append(LookupTable[(buffer[i + 2] & 0x0f) << 1]); // byte2(bits 4 - 7)
+                            sb.Append(LookupEncoding[(buffer[i + 2] & 0x0f) << 1]); // byte2(bits 4 - 7)
                             if (includePadding)
                                 sb.Append("===");
                         }
                         else
                         {
-                            sb.Append(LookupTable[(buffer[i + 2] & 0x0f) << 1 | buffer[i + 3] >> 7]); // byte2(bits 4 - 7) + byte3(bit 0)
-                            sb.Append(LookupTable[(buffer[i + 3] & 0x7f) >> 2]); // byte3(bits 1 - 5)
+                            sb.Append(LookupEncoding[(buffer[i + 2] & 0x0f) << 1 | buffer[i + 3] >> 7]); // byte2(bits 4 - 7) + byte3(bit 0)
+                            sb.Append(LookupEncoding[(buffer[i + 3] & 0x7f) >> 2]); // byte3(bits 1 - 5)
                             if (i + 4 >= buffer.Length)
                             {
-                                sb.Append(LookupTable[(buffer[i + 3] & 0x03) << 3]); // byte3(bits 6 - 7)
+                                sb.Append(LookupEncoding[(buffer[i + 3] & 0x03) << 3]); // byte3(bits 6 - 7)
                                 if (includePadding)
                                     sb.Append("=");
                             }
                             else
                             {
-                                sb.Append(LookupTable[(buffer[i + 3] & 0x03) << 3 | buffer[i + 4] >> 5]); // byte3(bits 6 - 7) + byte4(bits 0 - 2)
-                                sb.Append(LookupTable[buffer[i + 4] & 0x1f]);
+                                sb.Append(LookupEncoding[(buffer[i + 3] & 0x03) << 3 | buffer[i + 4] >> 5]); // byte3(bits 6 - 7) + byte4(bits 0 - 2)
+                                sb.Append(LookupEncoding[buffer[i + 4] & 0x1f]);
                             }
                         }
                     }
@@ -130,9 +134,46 @@ namespace OtpCore
             return sb.ToString();
         }
 
+        private static readonly byte[] LookupDecoding =
+        {
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, //  0-15  PAD
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // 16-31  PAD
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // 32-47  PAD
+            0x00, 0x00, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // 48-63  PAD, at 50 (chars 2-7), PAD
+            0x00, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, // 64-79  PAD, at 65 (chars A-O)
+            0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19                                // 80-90  (chars P-Z)
+        };
         public static byte[] Base32Decode(string encoded)
         {
-            throw new NotImplementedException();
+            if (encoded == null)
+                return new byte[] { };
+            var trimmed = new string(encoded.Where(c => !char.IsWhiteSpace(c)).ToArray()).TrimEnd('=').ToUpper();
+            var buffer = new byte[(trimmed.Length * 5) / 8];
+            for (var i = 0; i < trimmed.Length; i += 8)
+            {
+                var j = (i * 5) / 8;
+                buffer[j] = (byte)(LookupDecoding[trimmed[i]] << 3);
+                buffer[j] |= (byte)(LookupDecoding[trimmed[i + 1]] >> 2);
+                if (j + 1 >= buffer.Length)
+                    break;
+                buffer[j + 1] = (byte)(LookupDecoding[trimmed[i + 1]] << 6);
+                buffer[j + 1] |= (byte)(LookupDecoding[trimmed[i + 2]] << 1);
+                buffer[j + 1] |= (byte)(LookupDecoding[trimmed[i + 3]] >> 4);
+                if (j + 2 >= buffer.Length)
+                    break;
+                buffer[j + 2] = (byte)(LookupDecoding[trimmed[i + 3]] << 4);
+                buffer[j + 2] |= (byte)(LookupDecoding[trimmed[i + 4]] >> 1);
+                if (j + 3 >= buffer.Length)
+                    break;
+                buffer[j + 3] = (byte)(LookupDecoding[trimmed[i + 4]] << 7);
+                buffer[j + 3] |= (byte)(LookupDecoding[trimmed[i + 5]] << 2);
+                buffer[j + 3] |= (byte)(LookupDecoding[trimmed[i + 6]] >> 3);
+                if (j + 4 >= buffer.Length)
+                    break;
+                buffer[j + 4] = (byte)(LookupDecoding[trimmed[i + 6]] << 5);
+                buffer[j + 4] |= LookupDecoding[trimmed[i + 7]];
+            }
+            return buffer;
         }
     }
 }
