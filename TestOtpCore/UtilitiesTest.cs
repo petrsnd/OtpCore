@@ -164,5 +164,31 @@ namespace TestOtpCore
                     0x72, 0x90, 0xd9, 0xe5
                 }, 6));
         }
+
+        [Fact]
+        public void Base32Encode()
+        {
+            // Test vectors from RFC 4648
+            Assert.Equal("", Utilities.Base32Encode(Encoding.ASCII.GetBytes("")));
+            Assert.Equal("MY======", Utilities.Base32Encode(Encoding.ASCII.GetBytes("f"), true));
+            Assert.Equal("MZXQ====", Utilities.Base32Encode(Encoding.ASCII.GetBytes("fo"), true));
+            Assert.Equal("MZXW6===", Utilities.Base32Encode(Encoding.ASCII.GetBytes("foo"), true));
+            Assert.Equal("MZXW6YQ=", Utilities.Base32Encode(Encoding.ASCII.GetBytes("foob"), true));
+            Assert.Equal("MZXW6YTB", Utilities.Base32Encode(Encoding.ASCII.GetBytes("fooba"), true));
+            Assert.Equal("MZXW6YTBOI======", Utilities.Base32Encode(Encoding.ASCII.GetBytes("foobar"), true));
+
+            // Test vectors from RFC 4648 w/o padding
+            Assert.Equal("", Utilities.Base32Encode(Encoding.ASCII.GetBytes("")));
+            Assert.Equal("MY", Utilities.Base32Encode(Encoding.ASCII.GetBytes("f")));
+            Assert.Equal("MZXQ", Utilities.Base32Encode(Encoding.ASCII.GetBytes("fo")));
+            Assert.Equal("MZXW6", Utilities.Base32Encode(Encoding.ASCII.GetBytes("foo")));
+            Assert.Equal("MZXW6YQ", Utilities.Base32Encode(Encoding.ASCII.GetBytes("foob")));
+            Assert.Equal("MZXW6YTB", Utilities.Base32Encode(Encoding.ASCII.GetBytes("fooba")));
+            Assert.Equal("MZXW6YTBOI", Utilities.Base32Encode(Encoding.ASCII.GetBytes("foobar")));
+
+            // Online test implementations
+            Assert.Equal("KRUGS4ZANFZSAYJAOJSWC3DMPEQGY33OM4QHIZLTOQ======",
+                Utilities.Base32Encode(Encoding.ASCII.GetBytes("This is a really long test"), true));
+        }
     }
 }
