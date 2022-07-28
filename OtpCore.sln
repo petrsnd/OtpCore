@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32228.430
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OtpCore", "OtpCore\OtpCore.csproj", "{F9221BDD-8D1F-49DC-8946-0DAD6AC0A3AB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestOtpCore", "TestOtpCore\TestOtpCore.csproj", "{A085D32D-D12E-4F2B-83C9-1B1CD6E33295}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F9221BDD-8D1F-49DC-8946-0DAD6AC0A3AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9221BDD-8D1F-49DC-8946-0DAD6AC0A3AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9221BDD-8D1F-49DC-8946-0DAD6AC0A3AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9221BDD-8D1F-49DC-8946-0DAD6AC0A3AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A085D32D-D12E-4F2B-83C9-1B1CD6E33295}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A085D32D-D12E-4F2B-83C9-1B1CD6E33295}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A085D32D-D12E-4F2B-83C9-1B1CD6E33295}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A085D32D-D12E-4F2B-83C9-1B1CD6E33295}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6D26A502-416A-46EB-A87B-EEC1E960C63F}
+	EndGlobalSection
+EndGlobal
