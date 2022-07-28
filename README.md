@@ -1,7 +1,7 @@
 # OtpCore
 HOTP, TOTP, OTP Auth URI, and Base32 implementation in C# targeting .NET standard 2.0, compliant with:
-- (RFC 4226)[https://datatracker.ietf.org/doc/html/rfc4226] (HOTP)
-- (RFC 6238)[https://datatracker.ietf.org/doc/html/rfc6238] (TOTP)
+- [RFC 4226](https://datatracker.ietf.org/doc/html/rfc4226) (HOTP)
+- [RFC 6238](https://datatracker.ietf.org/doc/html/rfc6238) (TOTP)
 
 It has been verified against test vectors supplied in the RFCs. The interface includes support for
 multiple algorithms:
@@ -19,10 +19,10 @@ A parser for OTP Auth URIs (otpauth://) is also included that conforms to the do
 https://github.com/google/google-authenticator/wiki/Key-Uri-Format.
 
 This implementation also includes a Base32 encoder and decoder. It is compliant with
-(RFC 4648)[https://datatracker.ietf.org/doc/html/rfc4648],
-using the standard alphabet from (section 6)[https://datatracker.ietf.org/doc/html/rfc4648#section-6],
+[RFC 4648](https://datatracker.ietf.org/doc/html/rfc4648),
+using the standard alphabet from [section 6](https://datatracker.ietf.org/doc/html/rfc4648#section-6),
 and has been tested against the test vectors from
-(section 10)[https://datatracker.ietf.org/doc/html/rfc4648#section-10].
+[section 10](https://datatracker.ietf.org/doc/html/rfc4648#section-10).
 
 # Examples
 OtpCore is just a static utility library with static methods.  It does not track counters or
@@ -68,7 +68,7 @@ var range = TimeSpan.FromSeconds(120); // two minutes worth of codes
 var totpValues = Totp.GetTotpRange(secret, DateTimeOffset.Now, range, period, OtpHmacAlgorithm.HmacSha1, digits);
 ```
 
-HOTP Values:
-TOTP Values:
+HOTP Values format: [HotpValue.cs](OtpCore/HotpValue.cs)
+TOTP Values format: [TotpValue.cs](OtpCore/TotpValue.cs)
 
 It's free. Enjoy!
