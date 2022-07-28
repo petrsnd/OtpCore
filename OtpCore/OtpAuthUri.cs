@@ -50,13 +50,17 @@ namespace OtpCore
             if (_uri.Segments.Length != 2)
                 throw new ArgumentException("URI must contain a label after the authority", nameof(uri));
             if (_uri.Segments[0] != "/")
-                throw new ArgumentException("URI is missing separate between authority and label", nameof(uri));
-            Label = _uri.Segments[1];
+                throw new ArgumentException("URI is missing separator between authority and label", nameof(uri));
+            Label = HttpUtility.UrlDecode(_uri.Segments[1]);
             if (Label.Contains(":"))
             {
                 var split = Label.Split(new char[] { ':' }, 2, StringSplitOptions.RemoveEmptyEntries);
                 Issuer = split[0];
                 Account = split[1];
+            }
+            else
+            {
+                Account = Label;
             }
 
             if (string.IsNullOrEmpty(_uri.Query))
