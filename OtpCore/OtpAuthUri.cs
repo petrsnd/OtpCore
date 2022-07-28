@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Web;
 
-namespace OtpCore
+namespace Petrsnd.OtpCore
 {
     public class OtpAuthUri
     {

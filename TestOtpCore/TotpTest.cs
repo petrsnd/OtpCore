@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Text;
-using OtpCore;
 using Xunit;
 
-namespace TestOtpCore
+namespace Petrsnd.OtpCore.Test
 {
     public class TotpTest
     {

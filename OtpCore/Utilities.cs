@@ -4,7 +4,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace OtpCore
+namespace Petrsnd.OtpCore
 {
     public static class Utilities
     {
@@ -53,9 +53,12 @@ namespace OtpCore
             }
         }
 
-        private static readonly int[] DigitsPower = { 1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000 };
+        private static readonly long[] DigitsPower =
+            { 1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000, 10000000000 };
         public static string GetTruncatedDigits(byte[] hmac, int digits)
         {
+            if (digits < 6 || digits > 10)
+                throw new ArgumentException("Code digits length must be between 6 and 10", nameof(digits));
             // Assumes dynamic truncation algorithm from RFC 4226 5.3
             var offset = hmac[hmac.Length - 1] & 0xf;
             var truncated =
@@ -67,9 +70,8 @@ namespace OtpCore
             var result = $"{otp}";
             // prefix string with 0s to get desired number of digits
             while (result.Length < digits)
-            {
                 result = "0" + result;
-            }
+
             return result;
         }
 

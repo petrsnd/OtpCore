@@ -1,4 +1,4 @@
-﻿namespace OtpCore
+﻿namespace Petrsnd.OtpCore
 {
     public class HotpValue
     {

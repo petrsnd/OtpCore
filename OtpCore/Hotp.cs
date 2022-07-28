@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace OtpCore
+namespace Petrsnd.OtpCore
 {
     public class Hotp
     {

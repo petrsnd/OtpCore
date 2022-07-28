@@ -1,8 +1,7 @@
 ﻿using System;
-using OtpCore;
 using Xunit;
 
-namespace TestOtpCore
+namespace Petrsnd.OtpCore.Test
 {
     public class OtpAuthUriTest
     {

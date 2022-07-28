@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace OtpCore
+namespace Petrsnd.OtpCore
 {
     public class Totp
     {
         public static string GetTotpCode(byte[] secret, long unixTime, int period, OtpHmacAlgorithm algorithm, int digits)
         {
+            if (period < 1 || period > 3600)
+                throw new ArgumentOutOfRangeException("TOTP period, or time step, must be between 1 second and 1 hour",
+                    nameof(period));
             var counter = unixTime / period;
             return Hotp.GetHotpCode(secret, counter, algorithm, digits);
         }

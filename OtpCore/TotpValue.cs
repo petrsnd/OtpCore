@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace OtpCore
+namespace Petrsnd.OtpCore
 {
     public class TotpValue
     {

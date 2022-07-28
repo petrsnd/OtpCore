@@ -2,6 +2,39 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Petrsnd.OtpCore</RootNamespace>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Version>9999.9999.9999</Version>
+    <AssemblyVersion>9999.9999.9999.9999</AssemblyVersion>
+    <FileVersion>9999.9999.9999.9999</FileVersion>
+    <Authors>petrsnd@gmail.com</Authors>
+    <Company>petrsnd</Company>
+    <Copyright>(c) 2022 Daniel F. Peterson &lt;petrsnd@gmail.com&gt;</Copyright>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <Description>HOTP, TOTP, OTP Auth URI, and Base32 .NET Standard library</Description>
+    <PackageProjectUrl>https://github.com/petrsnd/TacacsPlusCore</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/petrsnd/TacacsPlusCore</RepositoryUrl>
+    <PackageTags>mfa;2fa;htop;totp;base32;csharp;netstandard;dotnet-standard</PackageTags>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <RepositoryType>git</RepositoryType>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PackageReleaseNotes>
+      HOTP and TOTP implementation in C# targeting .NET standard 2.0, compliant with RFC 4226 (HOTP) and
+      RFC 6238 (TOTP) and verified against supplied test vectors. The interface includes support for
+      multiple algorithms (HMAC-SHA1, HMAC-SHA256, HMAC-SHA384, and HMAC-SHA512), code lengths (6 - 10),
+      and an adjustable period, or time step, (1 second - 1 hour) for TOTP.
+
+      The reason for creating this library was to fetch multiple HOTP counters or a TOTP time range in
+      a single call.
+
+      A parser for OTP Auth URIs is also included that conforms to the documentation found at:
+      https://github.com/google/google-authenticator/wiki/Key-Uri-Format.
+
+      This implementation also includes a Base32 encoder and decoder. It is compliant with RFC 4648,
+      using the standard alphabet from section 6, and has been tested against the test vectors from
+      section 10.
+    </PackageReleaseNotes>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
   </PropertyGroup>
 

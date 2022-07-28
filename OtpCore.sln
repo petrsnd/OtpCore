@@ -5,7 +5,14 @@ VisualStudioVersion = 17.1.32228.430
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OtpCore", "OtpCore\OtpCore.csproj", "{F9221BDD-8D1F-49DC-8946-0DAD6AC0A3AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestOtpCore", "TestOtpCore\TestOtpCore.csproj", "{A085D32D-D12E-4F2B-83C9-1B1CD6E33295}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestOtpCore", "TestOtpCore\TestOtpCore.csproj", "{A085D32D-D12E-4F2B-83C9-1B1CD6E33295}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5CF61A58-176F-4A68-AAFF-1929CF28CAD6}"
+	ProjectSection(SolutionItems) = preProject
+		appveyor-prebuild.ps1 = appveyor-prebuild.ps1
+		appveyor.yml = appveyor.yml
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

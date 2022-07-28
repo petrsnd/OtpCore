@@ -1,8 +1,7 @@
 using System.Text;
 using Xunit;
-using OtpCore;
 
-namespace TestOtpCore
+namespace Petrsnd.OtpCore.Test
 {
     public class UtilitiesTest
     {
