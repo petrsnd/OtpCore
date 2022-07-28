@@ -143,11 +143,15 @@ namespace OtpCore
             0x00, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, // 64-79  PAD, at 65 (chars A-O)
             0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19                                // 80-90  (chars P-Z)
         };
+
+        private static readonly HashSet<char> ValidCharacters = new HashSet<char>("ABCDEFGHIJKLMNOPQRSTUVWXYZ234567");
         public static byte[] Base32Decode(string encoded)
         {
             if (encoded == null)
                 return new byte[] { };
             var trimmed = new string(encoded.Where(c => !char.IsWhiteSpace(c)).ToArray()).TrimEnd('=').ToUpper();
+            if (trimmed.Any(c => !ValidCharacters.Contains(c)))
+                throw new ArgumentException("The encoded string contains invalid RFC 4648 base32 characters");
             var buffer = new byte[(trimmed.Length * 5) / 8];
             for (var i = 0; i < trimmed.Length; i += 8)
             {

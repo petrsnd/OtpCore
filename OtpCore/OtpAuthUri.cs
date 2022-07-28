@@ -70,6 +70,7 @@ namespace OtpCore
             if (!Parameters.ContainsKey("secret"))
                 throw new ArgumentException("URI must contain a parameter called 'secret'", nameof(uri));
             Secret = Parameters["secret"];
+            Utilities.Base32Decode(Secret); // Test decoding
 
             if (Parameters.ContainsKey("issuer"))
             {
@@ -134,14 +135,10 @@ namespace OtpCore
         public string Label { get; set; }
         public string Issuer { get; set; }
         public string Account { get; set; }
+        
         public string Secret { get; set; }
-        public byte[] SecretBuf
-        {
-            get
-            {
-                return null;
-            }
-        }
+        public byte[] SecretBuf => Utilities.Base32Decode(Secret);
+
         public OtpHmacAlgorithm Algorithm { get; set; }
         public int Digits { get; set; }
         public long? Counter { get; set; }

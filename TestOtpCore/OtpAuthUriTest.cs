@@ -31,7 +31,7 @@ namespace TestOtpCore
 
 
             uri = new OtpAuthUri(
-                "otpauth://totp/Google%3Abob%40gmail.com?secret=y67ccl5qy7c0vuzgmwa7rtmkccle5rvx&issuer=Google");
+                "otpauth://totp/Google%3Abob%40gmail.com?secret=y67ccl5qy7cvuzgmwa7rtmkccle5rvx&issuer=Google");
             Assert.NotNull(uri);
             Assert.Equal(OtpType.Totp, uri.Type);
 
