@@ -19,16 +19,16 @@ namespace TestOtpCore
                     0x37, 0x38, 0x39, 0x30
                 }, secret);
             // counter values 0 through 9
-            Assert.Equal("755224", Hotp.GetHotpCode(OtpHmacAlgorithm.HmacSha1, secret, 0, 6));
-            Assert.Equal("287082", Hotp.GetHotpCode(OtpHmacAlgorithm.HmacSha1, secret, 1, 6));
-            Assert.Equal("359152", Hotp.GetHotpCode(OtpHmacAlgorithm.HmacSha1, secret, 2, 6));
-            Assert.Equal("969429", Hotp.GetHotpCode(OtpHmacAlgorithm.HmacSha1, secret, 3, 6));
-            Assert.Equal("338314", Hotp.GetHotpCode(OtpHmacAlgorithm.HmacSha1, secret, 4, 6));
-            Assert.Equal("254676", Hotp.GetHotpCode(OtpHmacAlgorithm.HmacSha1, secret, 5, 6));
-            Assert.Equal("287922", Hotp.GetHotpCode(OtpHmacAlgorithm.HmacSha1, secret, 6, 6));
-            Assert.Equal("162583", Hotp.GetHotpCode(OtpHmacAlgorithm.HmacSha1, secret, 7, 6));
-            Assert.Equal("399871", Hotp.GetHotpCode(OtpHmacAlgorithm.HmacSha1, secret, 8, 6));
-            Assert.Equal("520489", Hotp.GetHotpCode(OtpHmacAlgorithm.HmacSha1, secret, 9, 6));
+            Assert.Equal("755224", Hotp.GetHotpCode(secret, 0, OtpHmacAlgorithm.HmacSha1, 6));
+            Assert.Equal("287082", Hotp.GetHotpCode(secret, 1, OtpHmacAlgorithm.HmacSha1, 6));
+            Assert.Equal("359152", Hotp.GetHotpCode(secret, 2, OtpHmacAlgorithm.HmacSha1, 6));
+            Assert.Equal("969429", Hotp.GetHotpCode(secret, 3, OtpHmacAlgorithm.HmacSha1, 6));
+            Assert.Equal("338314", Hotp.GetHotpCode(secret, 4, OtpHmacAlgorithm.HmacSha1, 6));
+            Assert.Equal("254676", Hotp.GetHotpCode(secret, 5, OtpHmacAlgorithm.HmacSha1, 6));
+            Assert.Equal("287922", Hotp.GetHotpCode(secret, 6, OtpHmacAlgorithm.HmacSha1, 6));
+            Assert.Equal("162583", Hotp.GetHotpCode(secret, 7, OtpHmacAlgorithm.HmacSha1, 6));
+            Assert.Equal("399871", Hotp.GetHotpCode(secret, 8, OtpHmacAlgorithm.HmacSha1, 6));
+            Assert.Equal("520489", Hotp.GetHotpCode(secret, 9, OtpHmacAlgorithm.HmacSha1, 6));
         }
 
         [Fact]
@@ -44,7 +44,7 @@ namespace TestOtpCore
                     0x37, 0x38, 0x39, 0x30
                 }, secret);
             // counter values 0 through 9
-            var hotpValues = Hotp.GetHotpSequence(OtpHmacAlgorithm.HmacSha1, secret, 0, 10, 6);
+            var hotpValues = Hotp.GetHotpSequence(secret, 0, 10, OtpHmacAlgorithm.HmacSha1, 6);
             Assert.Equal(10, hotpValues.Length);
             Assert.Equal(0, hotpValues[0].Counter);
             Assert.Equal("755224", hotpValues[0].Code);
