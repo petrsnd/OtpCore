@@ -1,3 +1,8 @@
+[![Build status](https://img.shields.io/appveyor/build/petrsnd/OtpCore)](https://ci.appveyor.com/project/petrsnd/otpcore)
+[![nuget](https://img.shields.io/nuget/vpre/OtpCore)](https://www.nuget.org/packages/OtpCore)
+[![License](https://img.shields.io/github/license/petrsnd/OtpCore)](https://github.com/petrnsd/OtpCore/blob/master/LICENSE)
+
+
 # OtpCore
 HOTP, TOTP, OTP Auth URI, and Base32 implementation in C# targeting .NET standard 2.0, compliant with:
 - [RFC 4226](https://datatracker.ietf.org/doc/html/rfc4226) (HOTP)
