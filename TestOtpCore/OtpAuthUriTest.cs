@@ -37,7 +37,7 @@ namespace Petrsnd.OtpCore.Test
             Assert.Equal("id.churchofjesuschrist.org", uri.Issuer);
             Assert.Equal("john", uri.Account);
             Assert.Equal("ASDFASDFASDFASDF", uri.Secret);
-            Assert.Equal(6, uri.Digits);
+            Assert.Equal(6, uri.Digits); // default should be 6 if not specified
             Assert.Equal(30, uri.Period);
             Assert.Equal(OtpHmacAlgorithm.HmacSha1, uri.Algorithm);
 
@@ -82,12 +82,13 @@ namespace Petrsnd.OtpCore.Test
         public void ConstructorParts()
         {
             var uri = new OtpAuthUri(OtpType.Totp, Encoding.ASCII.GetBytes("12345678901234567890"), "bob@example.corp");
-            Assert.Equal("otpauth://totp/bob@example.corp?secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&algorithm=SHA1&period=30",
+            Assert.Equal("otpauth://totp/bob@example.corp?secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&algorithm=SHA1&period=30&digits=6",
                 uri.ToString());
+            Assert.Equal(6, uri.Digits); // default should be 6
 
             uri = new OtpAuthUri(OtpType.Hotp, Encoding.ASCII.GetBytes("12345678901234567890"), "bob@example.corp",
-                "Example", 0, OtpHmacAlgorithm.HmacSha512, 6);
-            Assert.Equal("otpauth://hotp/Example:bob@example.corp?secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&issuer=Example&algorithm=SHA512&counter=0",
+                "Example", 0, OtpHmacAlgorithm.HmacSha512, 8);
+            Assert.Equal("otpauth://hotp/Example:bob@example.corp?secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&issuer=Example&algorithm=SHA512&counter=0&digits=8",
                 uri.ToString());
 
         }

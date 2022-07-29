@@ -7,7 +7,7 @@ namespace Petrsnd.OtpCore
     public class OtpAuthUri
     {
         public OtpAuthUri(OtpType type, byte[] secret, string account, string issuer = null, long counterOrPeriod = 30,
-            OtpHmacAlgorithm algorithm = OtpHmacAlgorithm.HmacSha1, int digits = 8)
+            OtpHmacAlgorithm algorithm = OtpHmacAlgorithm.HmacSha1, int digits = 6)
         {
             if (string.IsNullOrEmpty(account))
                 throw new ArgumentException("Account must be specified", nameof(account));
@@ -36,12 +36,12 @@ namespace Petrsnd.OtpCore
             if (Type == OtpType.Hotp)
             {
                 Counter = counterOrPeriod;
-                uriString += $"&counter={Counter}";
+                uriString += $"&counter={Counter}&digits={Digits}";
             }
             else if (Type == OtpType.Totp)
             {
                 Period = (int)counterOrPeriod;
-                uriString += $"&period={Period}";
+                uriString += $"&period={Period}&digits={Digits}";
             }
 
             Uri = new Uri(uriString);
