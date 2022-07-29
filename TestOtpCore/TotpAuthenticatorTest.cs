@@ -8,6 +8,8 @@ namespace Petrsnd.OtpCore.Test
         [Fact]
         public void TotpAuthenticatorCreation()
         {
+            Assert.Throws<ArgumentException>(() => Totp.GetAuthenticator(
+                "otpauth://hotp/NOBODY:petrsnd@gmail.com?issuer=NOBODY&secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZA&algorithm=SHA256&digits=8&counter=12"));
             var authenticator =
                 Totp.GetAuthenticator(
                     "otpauth://totp/NOBODY:petrsnd@gmail.com?issuer=NOBODY&secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZA&algorithm=SHA256&digits=8");

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Petrsnd.OtpCore
 {
@@ -23,6 +24,21 @@ namespace Petrsnd.OtpCore
                 });
             }
             return hotpValues.ToArray();
+        }
+
+        public static HotpAuthenticator GetAuthenticator(string uriString)
+        {
+            return GetAuthenticator(new Uri(uriString));
+        }
+
+        public static HotpAuthenticator GetAuthenticator(Uri uri)
+        {
+            return GetAuthenticator(new OtpAuthUri(uri));
+        }
+
+        public static HotpAuthenticator GetAuthenticator(OtpAuthUri otpAuthUri)
+        {
+            return new HotpAuthenticator(otpAuthUri);
         }
     }
 }
