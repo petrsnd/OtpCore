@@ -4,7 +4,8 @@
 
 
 # OtpCore
-HOTP, TOTP, OTP Auth URI, and Base32 implementation in C# targeting .NET standard 2.0, compliant with:
+[HOTP](https://github.com/petrsnd/OtpCore#hotp), [TOTP](https://github.com/petrsnd/OtpCore#totp), OTP Auth URI, and 
+[Base32]() implementation in C# targeting .NET standard 2.0, compliant with:
 - [RFC 4226](https://datatracker.ietf.org/doc/html/rfc4226) (HOTP)
 - [RFC 6238](https://datatracker.ietf.org/doc/html/rfc6238) (TOTP)
 
@@ -28,6 +29,8 @@ This implementation also includes a Base32 encoder and decoder. It is compliant 
 using the standard alphabet from [section 6](https://datatracker.ietf.org/doc/html/rfc4648#section-6),
 and has been tested against the test vectors from
 [section 10](https://datatracker.ietf.org/doc/html/rfc4648#section-10).
+
+It's free. Enjoy!
 
 # Examples
 
@@ -119,7 +122,6 @@ int digits = 6;
 var hotpValues = Hotp.GetHotpCode(secret, counter, sequenceLength, OtpHmacAlgorithm.HmacSha1, digits));
 
 // Totp
-// Totp
 int period = 30;
 digits = 8;
 var range = TimeSpan.FromSeconds(120); // two minutes worth of codes
@@ -130,4 +132,11 @@ var totpValues = Totp.GetTotpRange(secret, DateTimeOffset.Now, range, period, Ot
 - HOTP Values format: [HotpValue.cs](OtpCore/HotpValue.cs)
 - TOTP Values format: [TotpValue.cs](OtpCore/TotpValue.cs)
 
-It's free. Enjoy!
+## Base32 Encoding and Decoding
+You may just want a simple Base32 encoder/decoder, because it isn't supplied in the .NET SDK.
+
+```C#
+var buffer = Encoding.ASCII.GetBytes("12345678901234567890");
+var encoded = Utilities.Base32Encode(buffer); // GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ
+var decoded = Utilities.Base32Decode(encoded);
+```
