@@ -48,5 +48,20 @@ namespace Petrsnd.OtpCore
             var rangeSeconds = Convert.ToInt32(range.TotalSeconds);
             return GetTotpRange(secret, unixTime, rangeSeconds, period, algorithm, digits);
         }
+
+        public static TotpAuthenticator GetAuthenticator(string uriString)
+        {
+            return GetAuthenticator(new Uri(uriString));
+        }
+
+        public static TotpAuthenticator GetAuthenticator(Uri uri)
+        {
+            return GetAuthenticator(new OtpAuthUri(uri));
+        }
+
+        public static TotpAuthenticator GetAuthenticator(OtpAuthUri otpAuthUri)
+        {
+            return new TotpAuthenticator(otpAuthUri);
+        }
     }
 }

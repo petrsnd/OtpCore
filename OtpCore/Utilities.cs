@@ -8,6 +8,23 @@ namespace Petrsnd.OtpCore
 {
     public static class Utilities
     {
+        internal static string OtpHmacAlgorithmToString(OtpHmacAlgorithm algorithm)
+        {
+            switch (algorithm)
+            {
+                case OtpHmacAlgorithm.HmacSha1:
+                    return "SHA1";
+                case OtpHmacAlgorithm.HmacSha256:
+                    return "SHA256";
+                case OtpHmacAlgorithm.HmacSha384:
+                    return "SHA384";
+                case OtpHmacAlgorithm.HmacSha512:
+                    return "SHA512";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(algorithm), algorithm, null);
+            }
+        }
+
         public static byte[] CounterToBuffer(long counter)
         {
             var counterBytes = new List<byte>();

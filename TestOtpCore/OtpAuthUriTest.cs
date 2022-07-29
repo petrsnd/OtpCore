@@ -73,7 +73,14 @@ namespace Petrsnd.OtpCore.Test
             Assert.Equal("HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ", uri.Secret);
             Assert.Equal(8, uri.Digits);
             Assert.Equal(20, uri.Period);
+            Assert.Null(uri.Counter);
             Assert.Equal(OtpHmacAlgorithm.HmacSha256, uri.Algorithm);
+        }
+
+        [Fact]
+        public void ConstructorParts()
+        {
+
         }
 
         // TODO: Constructor exceptions

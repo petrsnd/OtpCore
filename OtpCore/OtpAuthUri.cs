@@ -6,23 +6,43 @@ namespace Petrsnd.OtpCore
 {
     public class OtpAuthUri
     {
-        private readonly Uri _uri;
-
-        public OtpAuthUri(string issuer, string account, OtpType type, byte[] secret, long counterOrPeriod,
-            OtpHmacAlgorithm algorithm = OtpHmacAlgorithm.HmacSha1, int digits = 6)
+        public OtpAuthUri(OtpType type, byte[] secret, string account, string issuer = null, long counterOrPeriod = 30,
+            OtpHmacAlgorithm algorithm = OtpHmacAlgorithm.HmacSha1, int digits = 8)
         {
-            Issuer = issuer;
             if (string.IsNullOrEmpty(account))
                 throw new ArgumentException("Account must be specified", nameof(account));
-            Account = account;
             Type = type;
-            Secret = ""; // TODO: Base32 encode
-            if (Type == OtpType.Hotp)
-                Counter = counterOrPeriod;
-            else if (Type == OtpType.Totp)
-                Period = (int)counterOrPeriod;
+            Account = account;
+            Secret = Utilities.Base32Encode(secret);
             Algorithm = algorithm;
             Digits = digits;
+
+            string uriString;
+            if (!string.IsNullOrEmpty(issuer))
+            {
+                Issuer = issuer;
+                Label = $"{Issuer}:{Account}";
+                uriString =
+                    $"otpauth://{Type.ToString().ToLower()}/{Label}?secret={Secret}&issuer={Issuer}&algorithm={Utilities.OtpHmacAlgorithmToString(Algorithm)}";
+            }
+            else
+            {
+                Label = Account;
+                uriString = $"otpauth://{Type.ToString().ToLower()}/{Label}?secret={Secret}&algorithm={Utilities.OtpHmacAlgorithmToString(Algorithm)}";
+            }
+            
+            if (Type == OtpType.Hotp)
+            {
+                Counter = counterOrPeriod;
+                uriString += $"&counter={Counter}";
+            }
+            else if (Type == OtpType.Totp)
+            {
+                Period = (int)counterOrPeriod;
+                uriString += $"&period={Period}";
+            }
+
+            Uri = new Uri(uriString);
         }
 
         public OtpAuthUri(string uriString) : this(new Uri(uriString))
@@ -37,24 +57,24 @@ namespace Petrsnd.OtpCore
             Digits = 6;
 
             // parsing
-            _uri = uri;
-            if (_uri.Scheme != "otpauth")
+            Uri = uri;
+            if (Uri.Scheme != "otpauth")
                 throw new ArgumentException("URI scheme must be 'otpauth'", nameof(uri));
-            if (_uri.Authority != "hotp" && _uri.Authority != "totp")
+            if (Uri.Authority != "hotp" && Uri.Authority != "totp")
                 throw new ArgumentException("URI authority must be one of 'hotp' or totp'", nameof(uri));
-            if (_uri.Authority == "hotp")
+            if (Uri.Authority == "hotp")
                 Type = OtpType.Hotp;
-            else if (_uri.Authority == "totp")
+            else if (Uri.Authority == "totp")
                 Type = OtpType.Totp;
 
-            if (_uri.Segments.Length != 2)
+            if (Uri.Segments.Length != 2)
                 throw new ArgumentException("URI must contain a label after the authority", nameof(uri));
-            if (_uri.Segments[0] != "/")
+            if (Uri.Segments[0] != "/")
                 throw new ArgumentException("URI is missing separator between authority and label", nameof(uri));
-            Label = HttpUtility.UrlDecode(_uri.Segments[1]);
+            Label = HttpUtility.UrlDecode(Uri.Segments[1]);
             if (Label.Contains(":"))
             {
-                var split = Label.Split(new char[] { ':' }, 2, StringSplitOptions.RemoveEmptyEntries);
+                var split = Label.Split(new[] { ':' }, 2, StringSplitOptions.RemoveEmptyEntries);
                 Issuer = split[0];
                 Account = split[1];
             }
@@ -63,9 +83,9 @@ namespace Petrsnd.OtpCore
                 Account = Label;
             }
 
-            if (string.IsNullOrEmpty(_uri.Query))
+            if (string.IsNullOrEmpty(Uri.Query))
                 throw new ArgumentException("URI must contain a query string", nameof(uri));
-            var nameValues = HttpUtility.ParseQueryString(_uri.Query);
+            var nameValues = HttpUtility.ParseQueryString(Uri.Query);
             foreach (var key in nameValues.Keys)
             {
                 Parameters[key.ToString().ToLower()] = nameValues[key.ToString()];
@@ -134,6 +154,13 @@ namespace Petrsnd.OtpCore
             if (Type == OtpType.Totp && Period == null)
                 Period = 30;
         }
+
+        public override string ToString()
+        {
+            return Uri.ToString();
+        }
+
+        public Uri Uri { get; }
 
         public OtpType Type { get; set; }
         public string Label { get; set; }

@@ -188,6 +188,8 @@ namespace Petrsnd.OtpCore.Test
             // Online test implementations
             Assert.Equal("KRUGS4ZANFZSAYJAOJSWC3DMPEQGY33OM4QHIZLTOQ======",
                 Utilities.Base32Encode(Encoding.ASCII.GetBytes("This is a really long test"), true));
+            Assert.Equal("GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ",
+                Utilities.Base32Encode(Encoding.ASCII.GetBytes("12345678901234567890")));
         }
 
         [Fact]
@@ -216,6 +218,8 @@ namespace Petrsnd.OtpCore.Test
                 Utilities.Base32Decode("KRUGS4ZANFZSAYJAOJSWC3DMPEQGY33OM4QHIZLTOQ======"));
             Assert.Equal(Encoding.ASCII.GetBytes("This is a really long test"),
                 Utilities.Base32Decode("KRUGS4ZANFZSAYJAOJSWC3DMPEQGY33OM4QHIZLTOQ"));
+            Assert.Equal(Encoding.ASCII.GetBytes("12345678901234567890"),
+                Utilities.Base32Decode("GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ"));
         }
     }
 }
