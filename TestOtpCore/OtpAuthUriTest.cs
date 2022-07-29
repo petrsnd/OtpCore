@@ -91,6 +91,11 @@ namespace Petrsnd.OtpCore.Test
             Assert.Equal("otpauth://hotp/Example:bob@example.corp?secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&issuer=Example&algorithm=SHA512&counter=0&digits=8",
                 uri.ToString());
 
+            uri = new OtpAuthUri(OtpType.Hotp, Encoding.ASCII.GetBytes("12345678901234567890"), "bob@example.corp",
+                null, 5);
+            Assert.Equal(
+                "otpauth://hotp/bob@example.corp?secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&algorithm=SHA1&counter=5&digits=6",
+                uri.ToString());
         }
 
         [Fact]

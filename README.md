@@ -30,8 +30,62 @@ and has been tested against the test vectors from
 [section 10](https://datatracker.ietf.org/doc/html/rfc4648#section-10).
 
 # Examples
-OtpCore is just a static utility library with static methods.  It does not track counters or
-store secrets.
+
+## Authenticators
+OtpCore provides `HotpAuthenticator` and `TotpAuthenticator` classes which can be instantiated from a
+OTP Auth URI using the `GetAuthenticator()` method in the `Hotp` and `Totp` classes.
+
+### HOTP
+```C#
+// Create from string
+var uriString = "otpauth://hotp/NOBODY:petrsnd@gmail.com?issuer=NOBODY&secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&algorithm=SHA1&digits=6&counter=0";
+var authenticator = Hotp.GetAuthenticator(uriString);
+// Create from Uri object
+var uri = new Uri(uriString);
+authenticator = Hotp.GetAuthenticator(uri);
+// Create from scratch by supplying parameters
+var secret = Encoding.ASCII.GetBytes("12345678901234567890");
+var account = "bob@example.corp";
+var issuer = "Example";
+var counter = 0;
+var otpAuthUri = new OtpAuthUri(OtpType.Hotp, secret, account, issuer, counter); // issuer is optional, digits defaults to 6
+authenticator = Hotp.GetAuthenticator(otpAuthUri);
+// Get a code or a sequence of codes
+var code = authenticator.GetCode();
+var sequence = authenticator.GetSequence(3);
+// Increment or set the counter
+authenticator.IncrementCounter();
+authenticator.SetCounter(3);
+// Revert back to a string for storage with updated counter in URI
+// The URI is left unchanged unless IncrementCounter() or SetCounter() are called
+uriString = authenticator.ToString();
+```
+
+### TOTP
+```C#
+// Create from string
+var uriString = "otpauth://totp/NOBODY:petrsnd@gmail.com?issuer=NOBODY&secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZA&algorithm=SHA256&digits=8";
+var authenticator = Totp.GetAuthenticator(uriString);
+// Create from Uri object
+var uri = new Uri(uriString);
+authenticator = Totp.GetAuthenticator(uri);
+// Create from scratch by supplying parameters
+var secret = Encoding.ASCII.GetBytes("12345678901234567890");
+var account = "bob@example.corp";
+var issuer = "Example";
+var otpAuthUri = new OtpAuthUri(OtpType.Totp, secret, account, issuer); // issuer is optional, digits defaults to 6, period defaults to 30
+authenticator = Totp.GetAuthenticator(otpAuthUri);
+// Get a code or a range of codes
+var code = authenticator.GetCode();
+var range = authenticator.GetRange(TimeSpan.FromSeconds(90));
+// No counter to manage with TOTP!!!
+// Revert back to a string for storage if it was created from scratch
+uriString = authenticator.ToString();
+```
+
+## Static Methods
+OtpCore may also be used as a static utility library by only calling the static methods for HOTP and TOTP.
+When used this way, no object tracks counters or store secrets.
 
 Fetch a simple code.
 
