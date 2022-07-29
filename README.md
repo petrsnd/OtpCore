@@ -5,7 +5,8 @@
 
 # OtpCore
 [HOTP](https://github.com/petrsnd/OtpCore#hotp), [TOTP](https://github.com/petrsnd/OtpCore#totp), OTP Auth URI, and 
-[Base32]() implementation in C# targeting .NET standard 2.0, compliant with:
+[Base32](https://github.com/petrsnd/OtpCore#base32-encoding-and-decoding) implementation in C# targeting .NET standard 2.0,
+compliant with:
 - [RFC 4226](https://datatracker.ietf.org/doc/html/rfc4226) (HOTP)
 - [RFC 6238](https://datatracker.ietf.org/doc/html/rfc6238) (TOTP)
 
