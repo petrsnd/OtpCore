@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using Xunit;
 
 namespace Petrsnd.OtpCore.Test
@@ -80,10 +81,17 @@ namespace Petrsnd.OtpCore.Test
         [Fact]
         public void ConstructorParts()
         {
+            var uri = new OtpAuthUri(OtpType.Totp, Encoding.ASCII.GetBytes("12345678901234567890"), "bob@example.corp");
+            Assert.Equal("otpauth://totp/bob@example.corp?secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&algorithm=SHA1&period=30",
+                uri.ToString());
+
+            uri = new OtpAuthUri(OtpType.Hotp, Encoding.ASCII.GetBytes("12345678901234567890"), "bob@example.corp",
+                "Example", 0, OtpHmacAlgorithm.HmacSha512, 6);
+            Assert.Equal("otpauth://hotp/Example:bob@example.corp?secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&issuer=Example&algorithm=SHA512&counter=0",
+                uri.ToString());
 
         }
 
-        // TODO: Constructor exceptions
         [Fact]
         public void ConstructorExceptions()
         {
@@ -96,7 +104,37 @@ namespace Petrsnd.OtpCore.Test
             Assert.Throws<ArgumentException>(() => new OtpAuthUri("otpauth://otp/ACME%20Co:john.doe@email.com"));
             // no secret
             Assert.Throws<ArgumentException>(() => new OtpAuthUri("otpauth://totp/ACME%20Co:john.doe@email.com"));
-            
+            // empty secret
+            Assert.Throws<ArgumentException>(() => new OtpAuthUri("otpauth://totp/ACME%20Co:john.doe@email.com?secret="));
+            Assert.Throws<ArgumentException>(() => new OtpAuthUri("otpauth://totp/ACME%20Co:john.doe@email.com?secret=&algorithm=SHA1"));
+
+            // no account
+            Assert.Throws<ArgumentException>(() =>
+                new OtpAuthUri(OtpType.Hotp, Encoding.ASCII.GetBytes("12345678901234567890"), null));
+            // null secret
+            Assert.Throws<ArgumentException>(() => new OtpAuthUri(OtpType.Hotp, null, "bob@example.corp", "Example"));
+            // empty secret
+            Assert.Throws<ArgumentException>(() =>
+                new OtpAuthUri(OtpType.Hotp, new byte[] { }, "bob@example.corp", "Example"));
+        }
+
+        [Fact]
+        public void ToStringPreserve()
+        {
+            // capitalization in key names and key order and alg lowercase--should be preserved
+            var uri = new OtpAuthUri("otpauth://totp/Example:alice@google.com?Algorithm=sha256&Secret=JBSWY3DPEHPK3PXP&Issuer=Example");
+            Assert.NotNull(uri);
+            Assert.Equal(OtpType.Totp, uri.Type);
+            Assert.Equal("Example", uri.Issuer);
+            Assert.Equal("alice@google.com", uri.Account);
+            Assert.Equal("JBSWY3DPEHPK3PXP", uri.Secret);
+            Assert.Equal(6, uri.Digits);
+            Assert.Equal(30, uri.Period);
+            Assert.Equal(OtpHmacAlgorithm.HmacSha256, uri.Algorithm);
+
+            Assert.Equal(
+                "otpauth://totp/Example:alice@google.com?Algorithm=sha256&Secret=JBSWY3DPEHPK3PXP&Issuer=Example",
+                uri.ToString());
         }
     }
 }
