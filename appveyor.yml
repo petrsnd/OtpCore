@@ -1,8 +1,9 @@
 
-version: 1.0.1-dev-{build}
+version: 1.0.1-release-{build}
 branches:
   only:
   - main
+  - release-1.0
 image: Visual Studio 2022
 configuration: Release
 before_build:
