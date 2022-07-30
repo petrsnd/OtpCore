@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/github/license/petrsnd/OtpCore)](https://github.com/petrnsd/OtpCore/blob/master/LICENSE)
 
 
-# OtpCore
+# <img src="OTP.png" width="28" height="28" />  OtpCore
 [HOTP](https://github.com/petrsnd/OtpCore#hotp), [TOTP](https://github.com/petrsnd/OtpCore#totp), OTP Auth URI, and 
 [Base32](https://github.com/petrsnd/OtpCore#base32-encoding-and-decoding) implementation in C# targeting .NET standard 2.0,
 compliant with:
