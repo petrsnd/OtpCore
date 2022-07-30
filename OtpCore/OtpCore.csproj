@@ -14,6 +14,7 @@
     <Description>HOTP, TOTP, OTP Auth URI, and Base32 .NET Standard library</Description>
     <PackageProjectUrl>https://github.com/petrsnd/OtpCore</PackageProjectUrl>
     <RepositoryUrl>https://github.com/petrsnd/OtpCore</RepositoryUrl>
+    <PackageIcon>Content\images\OTP.png</PackageIcon>
     <PackageTags>mfa;2fa;htop;totp;base32;csharp;netstandard;dotnet-standard</PackageTags>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <RepositoryType>git</RepositoryType>
@@ -37,6 +38,10 @@
     </PackageReleaseNotes>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\OTP.png" Link="OTP.png" Pack="true" PackagePath="Content\images\" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Include="..\LICENSE">
