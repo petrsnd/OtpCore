@@ -17,6 +17,14 @@ namespace Petrsnd.OtpCore
                 throw new Exception("Period was not set--should have defaulted to 30");
         }
 
+        public OtpType Type => _uri.Type;
+        public string Label => _uri.Label;
+        public string Issuer => _uri.Issuer;
+        public string Account => _uri.Account;
+        public OtpHmacAlgorithm Algorithm => _uri.Algorithm;
+        public int Digits => _uri.Digits;
+        public int Period => _uri.Period.Value;
+
         public override string ToString()
         {
             return _uri.ToString();
