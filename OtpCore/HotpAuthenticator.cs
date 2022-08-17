@@ -17,6 +17,13 @@ namespace Petrsnd.OtpCore
                 throw new Exception("Counter was not set");
         }
 
+        public OtpType Type => _uri.Type;
+        public string Label => _uri.Label;
+        public string Issuer => _uri.Issuer;
+        public string Account => _uri.Account;
+        public OtpHmacAlgorithm Algorithm => _uri.Algorithm;
+        public long Counter => _uri.Counter.Value;
+
         public override string ToString()
         {
             return _uri.ToString();
