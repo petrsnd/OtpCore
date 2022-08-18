@@ -44,9 +44,11 @@ OTP Auth URI using the `GetAuthenticator()` method in the `Hotp` and `Totp` clas
 // Create from string
 var uriString = "otpauth://hotp/NOBODY:petrsnd@gmail.com?issuer=NOBODY&secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&algorithm=SHA1&digits=6&counter=0";
 var authenticator = Hotp.GetAuthenticator(uriString);
+
 // Create from Uri object
 var uri = new Uri(uriString);
 authenticator = Hotp.GetAuthenticator(uri);
+
 // Create from scratch by supplying parameters
 var secret = Encoding.ASCII.GetBytes("12345678901234567890");
 var account = "bob@example.corp";
@@ -54,12 +56,15 @@ var issuer = "Example";
 var counter = 0;
 var otpAuthUri = new OtpAuthUri(OtpType.Hotp, secret, account, issuer, counter); // issuer is optional, digits defaults to 6
 authenticator = Hotp.GetAuthenticator(otpAuthUri);
+
 // Get a code or a sequence of codes
 var code = authenticator.GetCode();
 var sequence = authenticator.GetSequence(3);
+
 // Increment or set the counter
 authenticator.IncrementCounter();
 authenticator.SetCounter(3);
+
 // Revert back to a string for storage with updated counter in URI
 // The URI is left unchanged unless IncrementCounter() or SetCounter() are called
 uriString = authenticator.ToString();
@@ -70,19 +75,24 @@ uriString = authenticator.ToString();
 // Create from string
 var uriString = "otpauth://totp/NOBODY:petrsnd@gmail.com?issuer=NOBODY&secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZA&algorithm=SHA256&digits=8";
 var authenticator = Totp.GetAuthenticator(uriString);
+
 // Create from Uri object
 var uri = new Uri(uriString);
 authenticator = Totp.GetAuthenticator(uri);
+
 // Create from scratch by supplying parameters
 var secret = Encoding.ASCII.GetBytes("12345678901234567890");
 var account = "bob@example.corp";
 var issuer = "Example";
-var otpAuthUri = new OtpAuthUri(OtpType.Totp, secret, account, issuer); // issuer is optional, digits defaults to 6, period defaults to 30
+// issuer is optional, digits defaults to 6, period defaults to 30
+var otpAuthUri = new OtpAuthUri(OtpType.Totp, secret, account, issuer);
 authenticator = Totp.GetAuthenticator(otpAuthUri);
+
 // Get a code or a range of codes
 var code = authenticator.GetCode();
 var range = authenticator.GetRange(TimeSpan.FromSeconds(90));
-// No counter to manage with TOTP!!!
+// No counter to manage with TOTP.  Yay!!!
+
 // Revert back to a string for storage if it was created from scratch
 uriString = authenticator.ToString();
 ```
@@ -106,10 +116,10 @@ digits = 8;
 long unixTime = 1111111111; // 2005-03-18 01:58:31 +0:00
 var totpCode = Totp.GetTotpCode(secret, unixTime, period, OtpHmacAlgorithm.HmacSha1, digits);
 
-var timeFuture = DateTimeOffset.Parse("2033-05-18 03:33:20 -7:00");
-var totpCode = Totp.GetTotpCode(secret, timeFuture, period, OtpHmacAlgorithm.HmacSha1, digits);
+var timeFuture = DateTimeOffset.Parse("2033-05-18 03:33:20 -7:00"); // future DateTimeOffset
+totpCode = Totp.GetTotpCode(secret, timeFuture, period, OtpHmacAlgorithm.HmacSha1, digits);
 
-var totpCode = Totp.GetTotpCode(secret, DateTimeOffset.Now, period, OtpHmacAlgorithm.HmacSha1, digits);
+totpCode = Totp.GetTotpCode(secret, DateTimeOffset.Now, period, OtpHmacAlgorithm.HmacSha1, digits); // Now
 ```
 
 Fetch multiple codes.
@@ -126,7 +136,6 @@ var hotpValues = Hotp.GetHotpCode(secret, counter, sequenceLength, OtpHmacAlgori
 int period = 30;
 digits = 8;
 var range = TimeSpan.FromSeconds(120); // two minutes worth of codes
-
 var totpValues = Totp.GetTotpRange(secret, DateTimeOffset.Now, range, period, OtpHmacAlgorithm.HmacSha1, digits);
 ```
 
