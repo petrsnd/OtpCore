@@ -12,20 +12,20 @@
     <Copyright>(c) 2022 Daniel F. Peterson &lt;petrsnd@gmail.com&gt;</Copyright>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <Description>
-    HOTP and TOTP implementation in C# targeting .NET standard 2.0, compliant with RFC 4226 (HOTP) and
-    RFC 6238 (TOTP) and verified against supplied test vectors. The interface includes support for
-    multiple algorithms (HMAC-SHA1, HMAC-SHA256, HMAC-SHA384, and HMAC-SHA512), code lengths (6 - 10),
-    and an adjustable period, or time step, (1 second - 1 hour) for TOTP.
+HOTP and TOTP implementation in C# targeting .NET standard 2.0, compliant with RFC 4226 (HOTP) and
+RFC 6238 (TOTP) and verified against supplied test vectors. The interface includes support for
+multiple algorithms (HMAC-SHA1, HMAC-SHA256, HMAC-SHA384, and HMAC-SHA512), code lengths (6 - 10),
+and an adjustable period, or time step, (1 second - 1 hour) for TOTP.
 
-    The reason for creating this library was to fetch multiple HOTP counters or a TOTP time range in
-    a single call.
+The reason for creating this library was to fetch multiple HOTP counters or a TOTP time range in
+a single call.
 
-    A parser for OTP Auth URIs is also included that conforms to the documentation found at:
-    https://github.com/google/google-authenticator/wiki/Key-Uri-Format.
+A parser for OTP Auth URIs is also included that conforms to the documentation found at:
+https://github.com/google/google-authenticator/wiki/Key-Uri-Format.
 
-    This implementation also includes a Base32 encoder and decoder. It is compliant with RFC 4648,
-    using the standard alphabet from section 6, and has been tested against the test vectors from
-    section 10.
+This implementation also includes a Base32 encoder and decoder. It is compliant with RFC 4648,
+using the standard alphabet from section 6, and has been tested against the test vectors from
+section 10.
     </Description>
     <PackageProjectUrl>https://github.com/petrsnd/OtpCore</PackageProjectUrl>
     <RepositoryUrl>https://github.com/petrsnd/OtpCore</RepositoryUrl>
@@ -36,10 +36,10 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageReleaseNotes>
-    - Initial release of library with HOTP and TOTP
-    - Added support for authenticators in key URI format
-    - Added getters for non-secret properties from authenticator object
-    - Fetch multiple codes with one call
+- Initial release of library with HOTP and TOTP
+- Added support for authenticators in key URI format
+- Added getters for non-secret properties from authenticator object
+- Fetch multiple codes with one call
     </PackageReleaseNotes>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
   </PropertyGroup>
