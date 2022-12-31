@@ -13,6 +13,8 @@ namespace Petrsnd.OtpCore
                 throw new ArgumentException("Account must be specified", nameof(account));
             if (secret == null || secret.Length == 0)
                 throw new ArgumentException("Secret must not be empty or null", nameof(secret));
+            if (type != OtpType.Hotp && type != OtpType.Totp)
+                throw new ArgumentException("OTP type must be hotp or totp", nameof(type));
             Type = type;
             Account = account;
             Secret = Utilities.Base32Encode(secret);
@@ -76,7 +78,7 @@ namespace Petrsnd.OtpCore
             Label = HttpUtility.UrlDecode(Uri.Segments[1]);
             if (Label.Contains(":"))
             {
-                var split = Label.Split(new[] { ':' }, 2, StringSplitOptions.RemoveEmptyEntries);
+                var split = Label.Split(new[] { ':' }, 2);
                 Issuer = split[0];
                 Account = split[1].TrimStart(' ');
             }
@@ -164,7 +166,11 @@ namespace Petrsnd.OtpCore
 
         public override string ToString()
         {
-            return Uri.ToString();
+            // Microsoft URI ToString support is not great.  By default, this method only escapes some characters:
+            // "The unescaped canonical representation of the Uri instance. All characters are unescaped except #, ?, and %."
+            // see https://learn.microsoft.com/en-us/dotnet/api/system.uri.tostring
+            // In order to get an example from the spec to pass unit tests, I have added a manual escape for space characters.
+            return Uri.ToString().Replace(" ", "%20");
         }
 
         public Uri Uri { get; }

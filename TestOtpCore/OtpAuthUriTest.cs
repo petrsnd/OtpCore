@@ -82,13 +82,15 @@ namespace Petrsnd.OtpCore.Test
         public void ConstructorParts()
         {
             var uri = new OtpAuthUri(OtpType.Totp, Encoding.ASCII.GetBytes("12345678901234567890"), "bob@example.corp");
-            Assert.Equal("otpauth://totp/bob@example.corp?secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&algorithm=SHA1&period=30&digits=6",
+            Assert.Equal(
+                "otpauth://totp/bob@example.corp?secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&algorithm=SHA1&period=30&digits=6",
                 uri.ToString());
             Assert.Equal(6, uri.Digits); // default should be 6
 
             uri = new OtpAuthUri(OtpType.Hotp, Encoding.ASCII.GetBytes("12345678901234567890"), "bob@example.corp",
                 "Example", 0, OtpHmacAlgorithm.HmacSha512, 8);
-            Assert.Equal("otpauth://hotp/Example:bob@example.corp?secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&issuer=Example&algorithm=SHA512&counter=0&digits=8",
+            Assert.Equal(
+                "otpauth://hotp/Example:bob@example.corp?secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&issuer=Example&algorithm=SHA512&counter=0&digits=8",
                 uri.ToString());
 
             uri = new OtpAuthUri(OtpType.Hotp, Encoding.ASCII.GetBytes("12345678901234567890"), "bob@example.corp",
@@ -105,14 +107,17 @@ namespace Petrsnd.OtpCore.Test
             Assert.Throws<UriFormatException>(() => new OtpAuthUri("otpauth/label:account?stuff=a"));
 
             // wrong scheme
-            Assert.Throws<ArgumentException>(() => new OtpAuthUri("https://github.com/google/google-authenticator/wiki/Key-Uri-Format"));
+            Assert.Throws<ArgumentException>(() =>
+                new OtpAuthUri("https://github.com/google/google-authenticator/wiki/Key-Uri-Format"));
             // invalid type
             Assert.Throws<ArgumentException>(() => new OtpAuthUri("otpauth://otp/ACME%20Co:john.doe@email.com"));
             // no secret
             Assert.Throws<ArgumentException>(() => new OtpAuthUri("otpauth://totp/ACME%20Co:john.doe@email.com"));
             // empty secret
-            Assert.Throws<ArgumentException>(() => new OtpAuthUri("otpauth://totp/ACME%20Co:john.doe@email.com?secret="));
-            Assert.Throws<ArgumentException>(() => new OtpAuthUri("otpauth://totp/ACME%20Co:john.doe@email.com?secret=&algorithm=SHA1"));
+            Assert.Throws<ArgumentException>(
+                () => new OtpAuthUri("otpauth://totp/ACME%20Co:john.doe@email.com?secret="));
+            Assert.Throws<ArgumentException>(() =>
+                new OtpAuthUri("otpauth://totp/ACME%20Co:john.doe@email.com?secret=&algorithm=SHA1"));
 
             // no account
             Assert.Throws<ArgumentException>(() =>
@@ -183,6 +188,18 @@ namespace Petrsnd.OtpCore.Test
             Assert.Equal(6, uri.Digits);
             Assert.Equal(30, uri.Period);
             Assert.Equal(OtpHmacAlgorithm.HmacSha256, uri.Algorithm);
+            // test 3a -- issuer example from URI spec 'Big Corporation'
+            uriString =
+                "otpauth://totp/Big%20Corporation:alice@google.com?Algorithm=sha256&Secret=JBSWY3DPEHPK3PXP&Issuer=Big%20Corporation";
+            uri = new OtpAuthUri(uriString);
+            Assert.NotNull(uri);
+            Assert.Equal(OtpType.Totp, uri.Type);
+            Assert.Equal("Big Corporation", uri.Issuer);
+            Assert.Equal("alice@google.com", uri.Account);
+            Assert.Equal("JBSWY3DPEHPK3PXP", uri.Secret);
+            Assert.Equal(6, uri.Digits);
+            Assert.Equal(30, uri.Period);
+            Assert.Equal(OtpHmacAlgorithm.HmacSha256, uri.Algorithm);
             Assert.Equal(uriString, uri.ToString());
             // test 4 -- should throw if issuer is not escaped in parameter portion
             Assert.Throws<ArgumentException>(() =>
@@ -194,7 +211,8 @@ namespace Petrsnd.OtpCore.Test
         public void GitHubIssueNo9Pt2()
         {
             // test 1 -- must allow optional spaces between the issuer delimiter and the account name
-            var uriString = "otpauth://totp/Example:    alice@google.com?Algorithm=sha256&Secret=JBSWY3DPEHPK3PXP&Issuer=Example";
+            var uriString =
+                "otpauth://totp/Example:%20%20%20alice@google.com?Algorithm=sha256&Secret=JBSWY3DPEHPK3PXP&Issuer=Example";
             var uri = new OtpAuthUri(uriString);
             Assert.NotNull(uri);
             Assert.Equal(OtpType.Totp, uri.Type);
@@ -211,10 +229,17 @@ namespace Petrsnd.OtpCore.Test
                     "otpauth://totp/Example:al:ice@google.com?Algorithm=sha256&Secret=JBSWY3DPEHPK3PXP&Issuer=Example"));
             Assert.Throws<ArgumentException>(() =>
                 new OtpAuthUri(
-                    "otpauth://totp/Ex:ample:alice@google.com?Algorithm=sha256&Secret=JBSWY3DPEHPK3PXP&Issuer=Example"));
+                    "otpauth://totp/Ex:ample%3Aalice@google.com?Algorithm=sha256&Secret=JBSWY3DPEHPK3PXP&Issuer=Example"));
             Assert.Throws<ArgumentException>(() =>
                 new OtpAuthUri(
                     "otpauth://totp/Example::alice@google.com?Algorithm=sha256&Secret=JBSWY3DPEHPK3PXP&Issuer=Example"));
+        }
+
+        [Fact]
+        public void GitHubIssueNo9Pt3()
+        {
+            Assert.Throws<ArgumentException>(() =>
+                new OtpAuthUri((OtpType)42, Encoding.ASCII.GetBytes("12345678901234567890"), "bob@example.corp"));
         }
     }
 }
