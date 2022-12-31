@@ -128,7 +128,9 @@ namespace Petrsnd.OtpCore.Test
         public void ToStringPreserve()
         {
             // capitalization in key names and key order and alg lowercase--should be preserved
-            var uri = new OtpAuthUri("otpauth://totp/Example:alice@google.com?Algorithm=sha256&Secret=JBSWY3DPEHPK3PXP&Issuer=Example");
+            var uriString =
+                "otpauth://totp/Example:alice@google.com?Algorithm=sha256&Secret=JBSWY3DPEHPK3PXP&Issuer=Example";
+            var uri = new OtpAuthUri(uriString);
             Assert.NotNull(uri);
             Assert.Equal(OtpType.Totp, uri.Type);
             Assert.Equal("Example", uri.Issuer);
@@ -137,10 +139,82 @@ namespace Petrsnd.OtpCore.Test
             Assert.Equal(6, uri.Digits);
             Assert.Equal(30, uri.Period);
             Assert.Equal(OtpHmacAlgorithm.HmacSha256, uri.Algorithm);
+            Assert.Equal(uriString, uri.ToString());
+        }
 
-            Assert.Equal(
-                "otpauth://totp/Example:alice@google.com?Algorithm=sha256&Secret=JBSWY3DPEHPK3PXP&Issuer=Example",
-                uri.ToString());
+        [Fact]
+        public void GitHubIssueNo9Pt1()
+        {
+            // test 1 -- simple named account with ampersand and equal sign
+            var uriString =
+                "otpauth://totp/Example:ACME&Co=foo?Algorithm=sha256&Secret=JBSWY3DPEHPK3PXP&Issuer=Example";
+            var uri = new OtpAuthUri(uriString);
+            Assert.NotNull(uri);
+            Assert.Equal(OtpType.Totp, uri.Type);
+            Assert.Equal("Example", uri.Issuer);
+            Assert.Equal("ACME&Co=foo", uri.Account);
+            Assert.Equal("JBSWY3DPEHPK3PXP", uri.Secret);
+            Assert.Equal(6, uri.Digits);
+            Assert.Equal(30, uri.Period);
+            Assert.Equal(OtpHmacAlgorithm.HmacSha256, uri.Algorithm);
+            Assert.Equal(uriString, uri.ToString());
+            // test 2 -- email-style named account with ampersand and equal sign
+            uriString =
+                "otpauth://totp/Example:ACME&Co=foo@google.com?Algorithm=sha256&Secret=JBSWY3DPEHPK3PXP&Issuer=Example";
+            uri = new OtpAuthUri(uriString);
+            Assert.NotNull(uri);
+            Assert.Equal(OtpType.Totp, uri.Type);
+            Assert.Equal("Example", uri.Issuer);
+            Assert.Equal("ACME&Co=foo@google.com", uri.Account);
+            Assert.Equal("JBSWY3DPEHPK3PXP", uri.Secret);
+            Assert.Equal(6, uri.Digits);
+            Assert.Equal(30, uri.Period);
+            Assert.Equal(OtpHmacAlgorithm.HmacSha256, uri.Algorithm);
+            Assert.Equal(uriString, uri.ToString());
+            // test 3 -- issuer with equal sign
+            uriString =
+                "otpauth://totp/ACME&Co=foo:alice@google.com?Algorithm=sha256&Secret=JBSWY3DPEHPK3PXP&Issuer=ACME%26Co%3Dfoo";
+            uri = new OtpAuthUri(uriString);
+            Assert.NotNull(uri);
+            Assert.Equal(OtpType.Totp, uri.Type);
+            Assert.Equal("ACME&Co=foo", uri.Issuer);
+            Assert.Equal("alice@google.com", uri.Account);
+            Assert.Equal("JBSWY3DPEHPK3PXP", uri.Secret);
+            Assert.Equal(6, uri.Digits);
+            Assert.Equal(30, uri.Period);
+            Assert.Equal(OtpHmacAlgorithm.HmacSha256, uri.Algorithm);
+            Assert.Equal(uriString, uri.ToString());
+            // test 4 -- should throw if issuer is not escaped in parameter portion
+            Assert.Throws<ArgumentException>(() =>
+                new OtpAuthUri(
+                    "otpauth://totp/ACME&Co=foo:alice@google.com?Algorithm=sha256&Secret=JBSWY3DPEHPK3PXP&Issuer=ACME&Co=foo"));
+        }
+
+        [Fact]
+        public void GitHubIssueNo9Pt2()
+        {
+            // test 1 -- must allow optional spaces between the issuer delimiter and the account name
+            var uriString = "otpauth://totp/Example:    alice@google.com?Algorithm=sha256&Secret=JBSWY3DPEHPK3PXP&Issuer=Example";
+            var uri = new OtpAuthUri(uriString);
+            Assert.NotNull(uri);
+            Assert.Equal(OtpType.Totp, uri.Type);
+            Assert.Equal("Example", uri.Issuer);
+            Assert.Equal("alice@google.com", uri.Account);
+            Assert.Equal("JBSWY3DPEHPK3PXP", uri.Secret);
+            Assert.Equal(6, uri.Digits);
+            Assert.Equal(30, uri.Period);
+            Assert.Equal(OtpHmacAlgorithm.HmacSha256, uri.Algorithm);
+            Assert.Equal(uriString, uri.ToString());
+            // test 2 -- issuer and account may not contain colons
+            Assert.Throws<ArgumentException>(() =>
+                new OtpAuthUri(
+                    "otpauth://totp/Example:al:ice@google.com?Algorithm=sha256&Secret=JBSWY3DPEHPK3PXP&Issuer=Example"));
+            Assert.Throws<ArgumentException>(() =>
+                new OtpAuthUri(
+                    "otpauth://totp/Ex:ample:alice@google.com?Algorithm=sha256&Secret=JBSWY3DPEHPK3PXP&Issuer=Example"));
+            Assert.Throws<ArgumentException>(() =>
+                new OtpAuthUri(
+                    "otpauth://totp/Example::alice@google.com?Algorithm=sha256&Secret=JBSWY3DPEHPK3PXP&Issuer=Example"));
         }
     }
 }

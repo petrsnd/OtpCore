@@ -78,12 +78,15 @@ namespace Petrsnd.OtpCore
             {
                 var split = Label.Split(new[] { ':' }, 2, StringSplitOptions.RemoveEmptyEntries);
                 Issuer = split[0];
-                Account = split[1];
+                Account = split[1].TrimStart(' ');
             }
             else
             {
                 Account = Label;
             }
+
+            if (Issuer != null && Issuer.Contains(":") || Account.Contains(":"))
+                throw new ArgumentException("URI label issuer and account may not contain colons", nameof(uri));
 
             if (string.IsNullOrEmpty(Uri.Query))
                 throw new ArgumentException("URI must contain a query string", nameof(uri));
