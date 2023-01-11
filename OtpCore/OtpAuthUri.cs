@@ -28,12 +28,13 @@ namespace Petrsnd.OtpCore
                 Issuer = issuer;
                 Label = $"{Issuer}:{Account}";
                 uriString =
-                    $"otpauth://{Type.ToString().ToLower()}/{Label}?secret={Secret}&issuer={Issuer}&algorithm={Utilities.OtpHmacAlgorithmToString(Algorithm)}";
+                    $"otpauth://{Type.ToString().ToLower()}/{Uri.EscapeDataString(Label)}?secret={Secret}&issuer={Issuer}&algorithm={Utilities.OtpHmacAlgorithmToString(Algorithm)}";
             }
             else
             {
                 Label = Account;
-                uriString = $"otpauth://{Type.ToString().ToLower()}/{Label}?secret={Secret}&algorithm={Utilities.OtpHmacAlgorithmToString(Algorithm)}";
+                uriString =
+                    $"otpauth://{Type.ToString().ToLower()}/{Uri.EscapeDataString(Label)}?secret={Secret}&algorithm={Utilities.OtpHmacAlgorithmToString(Algorithm)}";
             }
             
             if (Type == OtpType.Hotp)

@@ -251,5 +251,17 @@ namespace Petrsnd.OtpCore.Test
             Assert.Throws<ArgumentException>(() =>
                 new OtpAuthUri((OtpType)42, Encoding.ASCII.GetBytes("12345678901234567890"), "bob@example.corp"));
         }
+
+        [Fact]
+        public void GitHubIssueNo9Pt4()
+        {
+            var account = "αccount";
+            var issuer = "ACME?Co=192.168.1.1:8080";
+            var uri = new OtpAuthUri(OtpType.Totp, new byte[] { 0x01 }, account, issuer);
+
+            var uriString =
+                "otpauth://totp/ACME%3FCo%3D192.168.1.1%3A8080:%CE%B1ccount?secret=AE&issuer=ACME%3fCo%3d192.168.1.1%3a8080&algorithm=SHA1&period=30&digits=6";
+            Assert.True(UriComparer.AreEqual(uri.ToString(), uriString));
+        }
     }
 }
