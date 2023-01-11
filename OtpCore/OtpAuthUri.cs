@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Web;
 
 namespace Petrsnd.OtpCore
@@ -81,14 +82,12 @@ namespace Petrsnd.OtpCore
                 var split = Label.Split(new[] { ':' }, 2);
                 Issuer = split[0];
                 Account = split[1].TrimStart(' ');
+                SavedSpaces = new string(' ', split[1].Length - Account.Length);
             }
             else
             {
                 Account = Label;
             }
-
-            if (Issuer != null && Issuer.Contains(":") || Account.Contains(":"))
-                throw new ArgumentException("URI label issuer and account may not contain colons", nameof(uri));
 
             if (string.IsNullOrEmpty(Uri.Query))
                 throw new ArgumentException("URI must contain a query string", nameof(uri));
@@ -96,6 +95,25 @@ namespace Petrsnd.OtpCore
             foreach (var key in nameValues.Keys)
             {
                 Parameters[key.ToString().ToLower()] = nameValues[key.ToString()];
+            }
+
+            if (Issuer != null && (Issuer.Contains(":") || Account.Contains(":")))
+            {
+                if (!Parameters.ContainsKey("issuer"))
+                {
+                    throw new ArgumentException(
+                        "URI label issuer and account may not contain colons, unless issuer parameter is present",
+                        nameof(uri));
+                }
+                if (!Label.StartsWith(Parameters["issuer"] + ":"))
+                {
+                    throw new ArgumentException(
+                        "URI label issuer and account may not contain colons, unless issuer parameter matches issuer in label",
+                        nameof(uri));
+                }
+
+                Issuer = Parameters["issuer"];
+                Account = Label.Substring(Parameters["issuer"].Length + 1);
             }
 
             if (!Parameters.ContainsKey("secret"))
@@ -166,11 +184,25 @@ namespace Petrsnd.OtpCore
 
         public override string ToString()
         {
-            // Microsoft URI ToString support is not great.  By default, this method only escapes some characters:
+            // Microsoft URI ToString support is not great.  By default, Uri.ToString() method only escapes some characters:
             // "The unescaped canonical representation of the Uri instance. All characters are unescaped except #, ?, and %."
             // see https://learn.microsoft.com/en-us/dotnet/api/system.uri.tostring
-            // In order to get an example from the spec to pass unit tests, I have added a manual escape for space characters.
-            return Uri.ToString().Replace(" ", "%20");
+            // In order to get an example from the spec to pass unit tests, I have had to manually rebuild the string representation.
+            //   Also,
+            // HttpUtility.UrlEncode adds + for spaces (weird)
+            var sb = new StringBuilder("otpauth://");
+            sb.Append(Type.ToString().ToLower());
+            sb.Append("/");
+            if (!string.IsNullOrEmpty(Issuer))
+            {
+                sb.Append(Uri.EscapeDataString(Issuer));
+                sb.Append(":");
+            }
+            if (!string.IsNullOrEmpty(SavedSpaces))
+                sb.Append(Uri.EscapeDataString(SavedSpaces));
+            sb.Append(Uri.EscapeDataString(Account));
+            sb.Append(Uri.Query);
+            return sb.ToString();
         }
 
         public Uri Uri { get; }
@@ -179,7 +211,9 @@ namespace Petrsnd.OtpCore
         public string Label { get; }
         public string Issuer { get; }
         public string Account { get; }
-        
+
+        private string SavedSpaces { get; }
+
         public string Secret { get; }
         public byte[] SecretBuf => Utilities.Base32Decode(Secret);
 
