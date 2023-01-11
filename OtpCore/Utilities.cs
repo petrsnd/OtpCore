@@ -29,7 +29,7 @@ namespace Petrsnd.OtpCore
         {
             if (counter < 0)
                 throw new ArgumentOutOfRangeException(nameof(counter), counter,
-                    "Counter is a signed integer but must be positive");
+                    "Counter is a signed integer but must not be negative");
             var counterBytes = new List<byte>();
             while (counter > 0)
             {

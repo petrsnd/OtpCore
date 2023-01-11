@@ -37,7 +37,7 @@ namespace Petrsnd.OtpCore
             {
                 if (counterOrPeriod < 0)
                     throw new ArgumentOutOfRangeException(nameof(counterOrPeriod), counterOrPeriod,
-                        "Counter is a signed integer but must be positive");
+                        "Counter is a signed integer but must not be negative");
                 Counter = counterOrPeriod;
                 uriString += $"&counter={Counter}&digits={Digits}";
             }
@@ -147,7 +147,7 @@ namespace Petrsnd.OtpCore
                 if (!long.TryParse(Parameters["counter"], out var counter))
                     throw new ArgumentException("URI counter query parameter must be numeric", nameof(uri));
                 if (counter < 0)
-                    throw new ArgumentException("Counter must be positive", nameof(uri));
+                    throw new ArgumentException("Counter must not be negative", nameof(uri));
                 Counter = counter;
             }
 
