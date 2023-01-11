@@ -10,12 +10,10 @@ namespace Petrsnd.OtpCore.Test
         {
             Assert.Throws<ArgumentException>(() => Totp.GetAuthenticator(
                 "otpauth://hotp/NOBODY:petrsnd@gmail.com?issuer=NOBODY&secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZA&algorithm=SHA256&digits=8&counter=12"));
-            var authenticator =
-                Totp.GetAuthenticator(
-                    "otpauth://totp/NOBODY:petrsnd@gmail.com?issuer=NOBODY&secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZA&algorithm=SHA256&digits=8");
-            Assert.Equal(
-                "otpauth://totp/NOBODY:petrsnd@gmail.com?issuer=NOBODY&secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZA&algorithm=SHA256&digits=8",
-                authenticator.ToString());
+            var uriString =
+                "otpauth://totp/NOBODY:petrsnd@gmail.com?issuer=NOBODY&secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZA&algorithm=SHA256&digits=8";
+            var authenticator = Totp.GetAuthenticator(uriString);
+            Assert.True(UriComparer.AreEqual(authenticator.ToString(), uriString));
             Assert.NotNull(authenticator.GetCode());
             Assert.NotEmpty(authenticator.GetCode());
             Assert.NotEmpty(authenticator.GetRange(TimeSpan.Zero));
@@ -24,12 +22,10 @@ namespace Petrsnd.OtpCore.Test
         [Fact]
         public void GetCode()
         {
-            var authenticator =
-                Totp.GetAuthenticator(
-                    "otpauth://totp/NOBODY:petrsnd@gmail.com?issuer=NOBODY&secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZA&algorithm=SHA256&digits=8");
-            Assert.Equal(
-                "otpauth://totp/NOBODY:petrsnd@gmail.com?issuer=NOBODY&secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZA&algorithm=SHA256&digits=8",
-                authenticator.ToString());
+            var uriString =
+                "otpauth://totp/NOBODY:petrsnd@gmail.com?issuer=NOBODY&secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZA&algorithm=SHA256&digits=8";
+            var authenticator = Totp.GetAuthenticator(uriString);
+            Assert.True(UriComparer.AreEqual(authenticator.ToString(), uriString));
             Assert.Equal("46119246", authenticator.GetCode(DateTimeOffset.Parse("1970-01-01 00:00:59 +0:00")));
         }
 

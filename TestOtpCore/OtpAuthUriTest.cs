@@ -82,22 +82,19 @@ namespace Petrsnd.OtpCore.Test
         public void ConstructorParts()
         {
             var uri = new OtpAuthUri(OtpType.Totp, Encoding.ASCII.GetBytes("12345678901234567890"), "bob@example.corp");
-            Assert.Equal(
-                "otpauth://totp/bob@example.corp?secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&algorithm=SHA1&period=30&digits=6",
-                uri.ToString());
+            Assert.True(UriComparer.AreEqual(uri.ToString(),
+                "otpauth://totp/bob@example.corp?secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&algorithm=SHA1&period=30&digits=6"));
             Assert.Equal(6, uri.Digits); // default should be 6
 
             uri = new OtpAuthUri(OtpType.Hotp, Encoding.ASCII.GetBytes("12345678901234567890"), "bob@example.corp",
                 "Example", 0, OtpHmacAlgorithm.HmacSha512, 8);
-            Assert.Equal(
-                "otpauth://hotp/Example:bob@example.corp?secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&issuer=Example&algorithm=SHA512&counter=0&digits=8",
-                uri.ToString());
+            Assert.True(UriComparer.AreEqual(uri.ToString(),
+                "otpauth://hotp/Example:bob@example.corp?secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&issuer=Example&algorithm=SHA512&counter=0&digits=8"));
 
             uri = new OtpAuthUri(OtpType.Hotp, Encoding.ASCII.GetBytes("12345678901234567890"), "bob@example.corp",
                 null, 5);
-            Assert.Equal(
-                "otpauth://hotp/bob@example.corp?secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&algorithm=SHA1&counter=5&digits=6",
-                uri.ToString());
+            Assert.True(UriComparer.AreEqual(uri.ToString(),
+                "otpauth://hotp/bob@example.corp?secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&algorithm=SHA1&counter=5&digits=6"));
         }
 
         [Fact]
@@ -144,7 +141,7 @@ namespace Petrsnd.OtpCore.Test
             Assert.Equal(6, uri.Digits);
             Assert.Equal(30, uri.Period);
             Assert.Equal(OtpHmacAlgorithm.HmacSha256, uri.Algorithm);
-            Assert.Equal(uriString, uri.ToString());
+            Assert.True(UriComparer.AreEqual(uri.ToString(), uriString));
         }
 
         [Fact]
@@ -152,7 +149,7 @@ namespace Petrsnd.OtpCore.Test
         {
             // test 1 -- simple named account with ampersand and equal sign
             var uriString =
-                "otpauth://totp/Example:ACME&Co=foo?Algorithm=sha256&Secret=JBSWY3DPEHPK3PXP&Issuer=Example";
+                "otpauth://totp/Example:ACME%26Co=foo?Algorithm=sha256&Secret=JBSWY3DPEHPK3PXP&Issuer=Example";
             var uri = new OtpAuthUri(uriString);
             Assert.NotNull(uri);
             Assert.Equal(OtpType.Totp, uri.Type);
@@ -162,10 +159,10 @@ namespace Petrsnd.OtpCore.Test
             Assert.Equal(6, uri.Digits);
             Assert.Equal(30, uri.Period);
             Assert.Equal(OtpHmacAlgorithm.HmacSha256, uri.Algorithm);
-            Assert.Equal(uriString, uri.ToString());
+            Assert.True(UriComparer.AreEqual(uri.ToString(), uriString));
             // test 2 -- email-style named account with ampersand and equal sign
             uriString =
-                "otpauth://totp/Example:ACME&Co=foo@google.com?Algorithm=sha256&Secret=JBSWY3DPEHPK3PXP&Issuer=Example";
+                "otpauth://totp/Example:ACME&Co%3dfoo@google.com?Algorithm=sha256&Secret=JBSWY3DPEHPK3PXP&Issuer=Example";
             uri = new OtpAuthUri(uriString);
             Assert.NotNull(uri);
             Assert.Equal(OtpType.Totp, uri.Type);
@@ -175,10 +172,10 @@ namespace Petrsnd.OtpCore.Test
             Assert.Equal(6, uri.Digits);
             Assert.Equal(30, uri.Period);
             Assert.Equal(OtpHmacAlgorithm.HmacSha256, uri.Algorithm);
-            Assert.Equal(uriString, uri.ToString());
+            Assert.True(UriComparer.AreEqual(uri.ToString(), uriString));
             // test 3 -- issuer with equal sign
             uriString =
-                "otpauth://totp/ACME&Co=foo:alice@google.com?Algorithm=sha256&Secret=JBSWY3DPEHPK3PXP&Issuer=ACME%26Co%3Dfoo";
+                "otpauth://totp/ACME%26Co%3dfoo:alice@google.com?Algorithm=sha256&Secret=JBSWY3DPEHPK3PXP&Issuer=ACME%26Co%3Dfoo";
             uri = new OtpAuthUri(uriString);
             Assert.NotNull(uri);
             Assert.Equal(OtpType.Totp, uri.Type);
@@ -200,7 +197,7 @@ namespace Petrsnd.OtpCore.Test
             Assert.Equal(6, uri.Digits);
             Assert.Equal(30, uri.Period);
             Assert.Equal(OtpHmacAlgorithm.HmacSha256, uri.Algorithm);
-            Assert.Equal(uriString, uri.ToString());
+            Assert.True(UriComparer.AreEqual(uri.ToString(), uriString));
             // test 4 -- should throw if issuer is not escaped in parameter portion
             Assert.Throws<ArgumentException>(() =>
                 new OtpAuthUri(
@@ -222,17 +219,30 @@ namespace Petrsnd.OtpCore.Test
             Assert.Equal(6, uri.Digits);
             Assert.Equal(30, uri.Period);
             Assert.Equal(OtpHmacAlgorithm.HmacSha256, uri.Algorithm);
-            Assert.Equal(uriString, uri.ToString());
+            Assert.True(UriComparer.AreEqual(uri.ToString(), uriString));
             // test 2 -- issuer and account may not contain colons
             Assert.Throws<ArgumentException>(() =>
                 new OtpAuthUri(
-                    "otpauth://totp/Example:al:ice@google.com?Algorithm=sha256&Secret=JBSWY3DPEHPK3PXP&Issuer=Example"));
+                    "otpauth://totp/Example:al:ice@google.com?Algorithm=sha256&Secret=JBSWY3DPEHPK3PXP"));
             Assert.Throws<ArgumentException>(() =>
                 new OtpAuthUri(
-                    "otpauth://totp/Ex:ample%3Aalice@google.com?Algorithm=sha256&Secret=JBSWY3DPEHPK3PXP&Issuer=Example"));
+                    "otpauth://totp/Ex:ample%3Aalice@google.com?Algorithm=sha256&Secret=JBSWY3DPEHPK3PXP"));
             Assert.Throws<ArgumentException>(() =>
                 new OtpAuthUri(
-                    "otpauth://totp/Example::alice@google.com?Algorithm=sha256&Secret=JBSWY3DPEHPK3PXP&Issuer=Example"));
+                    "otpauth://totp/Example::alice@google.com?Algorithm=sha256&Secret=JBSWY3DPEHPK3PXP"));
+            // test 3 -- unless the issuer parameter also contains matching colons to remove ambiguity
+            uriString =
+                "otpauth://totp/ACME%3FCo%3D192.168.1.1%3A8080:%CE%B1ccount?secret=AE&issuer=ACME%3fCo%3d192.168.1.1%3a8080&algorithm=SHA1&period=30&digits=6";
+            uri = new OtpAuthUri(uriString);
+            Assert.NotNull(uri);
+            Assert.Equal(OtpType.Totp, uri.Type);
+            Assert.Equal("ACME?Co=192.168.1.1:8080", uri.Issuer);
+            Assert.Equal("αccount", uri.Account);
+            Assert.Equal("AE", uri.Secret);
+            Assert.Equal(6, uri.Digits);
+            Assert.Equal(30, uri.Period);
+            Assert.Equal(OtpHmacAlgorithm.HmacSha1, uri.Algorithm);
+            Assert.True(UriComparer.AreEqual(uri.ToString(), uriString));
         }
 
         [Fact]
