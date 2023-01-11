@@ -28,8 +28,8 @@ namespace Petrsnd.OtpCore
         public static byte[] CounterToBuffer(long counter)
         {
             if (counter < 0)
-                throw new ArgumentOutOfRangeException("counter is signed integer but must be positive",
-                    nameof(counter));
+                throw new ArgumentOutOfRangeException(nameof(counter), counter,
+                    "Counter is a signed integer but must be positive");
             var counterBytes = new List<byte>();
             while (counter > 0)
             {
