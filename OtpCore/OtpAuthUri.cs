@@ -25,7 +25,8 @@ namespace Petrsnd.OtpCore
             string uriString;
             if (!string.IsNullOrEmpty(issuer))
             {
-                Issuer = issuer;
+                IssuerLabel = issuer;
+                IssuerParameter = issuer;
                 Label = $"{Issuer}:{Account}";
                 uriString =
                     $"otpauth://{Type.ToString().ToLower()}/{Uri.EscapeDataString(Label)}?secret={Secret}&issuer={Issuer}&algorithm={Utilities.OtpHmacAlgorithmToString(Algorithm)}";
@@ -81,7 +82,7 @@ namespace Petrsnd.OtpCore
             if (Label.Contains(":"))
             {
                 var split = Label.Split(new[] { ':' }, 2);
-                Issuer = split[0];
+                IssuerLabel = split[0];
                 Account = split[1].TrimStart(' ');
                 SavedSpaces = new string(' ', split[1].Length - Account.Length);
             }
@@ -98,7 +99,7 @@ namespace Petrsnd.OtpCore
                 Parameters[key.ToString().ToLower()] = nameValues[key.ToString()];
             }
 
-            if (Issuer != null && (Issuer.Contains(":") || Account.Contains(":")))
+            if (IssuerLabel != null && (IssuerLabel.Contains(":") || Account.Contains(":")))
             {
                 if (!Parameters.ContainsKey("issuer"))
                 {
@@ -113,7 +114,8 @@ namespace Petrsnd.OtpCore
                         nameof(uri));
                 }
 
-                Issuer = Parameters["issuer"];
+                IssuerLabel = Parameters["issuer"];
+                IssuerParameter = IssuerLabel;
                 Account = Label.Substring(Parameters["issuer"].Length + 1);
             }
 
@@ -126,14 +128,7 @@ namespace Petrsnd.OtpCore
 
             if (Parameters.ContainsKey("issuer"))
             {
-                if (string.IsNullOrEmpty(Issuer))
-                    Issuer = Parameters["issuer"];
-                else
-                {
-                    if (string.Compare(Issuer, Parameters["issuer"], StringComparison.Ordinal) != 0)
-                        throw new ArgumentException("URI issuer from label must match issuer from query string",
-                            nameof(uri));
-                }
+                IssuerParameter = Parameters["issuer"];
             }
 
             if (Parameters.ContainsKey("algorithm"))
@@ -194,9 +189,9 @@ namespace Petrsnd.OtpCore
             var sb = new StringBuilder("otpauth://");
             sb.Append(Type.ToString().ToLower());
             sb.Append("/");
-            if (!string.IsNullOrEmpty(Issuer))
+            if (!string.IsNullOrEmpty(IssuerLabel))
             {
-                sb.Append(Uri.EscapeDataString(Issuer));
+                sb.Append(Uri.EscapeDataString(IssuerLabel));
                 sb.Append(":");
             }
             if (!string.IsNullOrEmpty(SavedSpaces))
@@ -210,7 +205,23 @@ namespace Petrsnd.OtpCore
 
         public OtpType Type { get; }
         public string Label { get; }
-        public string Issuer { get; }
+
+        public string IssuerLabel { get; }
+        public string IssuerParameter { get; }
+
+        public string Issuer
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(IssuerParameter))
+                    return IssuerParameter;
+                if (!string.IsNullOrEmpty(IssuerLabel))
+                    return IssuerLabel;
+                return null;
+                
+            }
+        }
+
         public string Account { get; }
 
         private string SavedSpaces { get; }

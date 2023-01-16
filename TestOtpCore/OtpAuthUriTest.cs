@@ -198,10 +198,6 @@ namespace Petrsnd.OtpCore.Test
             Assert.Equal(30, uri.Period);
             Assert.Equal(OtpHmacAlgorithm.HmacSha256, uri.Algorithm);
             Assert.True(UriComparer.AreEqual(uri.ToString(), uriString));
-            // test 4 -- should throw if issuer is not escaped in parameter portion
-            Assert.Throws<ArgumentException>(() =>
-                new OtpAuthUri(
-                    "otpauth://totp/ACME&Co=foo:alice@google.com?Algorithm=sha256&Secret=JBSWY3DPEHPK3PXP&Issuer=ACME&Co=foo"));
         }
 
         [Fact]
@@ -261,6 +257,114 @@ namespace Petrsnd.OtpCore.Test
 
             var uriString =
                 "otpauth://totp/ACME%3FCo%3D192.168.1.1%3A8080:%CE%B1ccount?secret=AE&issuer=ACME%3fCo%3d192.168.1.1%3a8080&algorithm=SHA1&period=30&digits=6";
+            Assert.True(UriComparer.AreEqual(uri.ToString(), uriString));
+        }
+
+        [Fact]
+        public void CommonAuthenticatorsGoogle()
+        {
+            // Google Authenticator Sample
+            var uriString = "otpauth://totp/Google%3Apetrsnd%40gmail.com?secret=falgckrtx5fdbkwqukum666jo2mxpziy&issuer=Google";
+            var uri = new OtpAuthUri(uriString);
+            Assert.NotNull(uri);
+            Assert.Equal(OtpType.Totp, uri.Type);
+            Assert.Equal("Google", uri.Issuer);
+            Assert.Equal("petrsnd@gmail.com", uri.Account);
+            Assert.Equal("falgckrtx5fdbkwqukum666jo2mxpziy", uri.Secret);
+            Assert.Equal(6, uri.Digits);
+            Assert.Equal(30, uri.Period);
+            Assert.Equal(OtpHmacAlgorithm.HmacSha1, uri.Algorithm);
+            Assert.True(UriComparer.AreEqual(uri.ToString(), uriString));
+        }
+
+        [Fact]
+        public void CommonAuthenticatorsMicrosoft()
+        {
+            // Microsoft Authenticator Sample
+            var uriString = "otpauth://totp/Petrsnd.Org%3Atest2fa%40petrsnd.org?secret=cskm2nmg5cvbcjzx&issuer=Microsoft";
+            var uri = new OtpAuthUri(uriString);
+            Assert.NotNull(uri);
+            Assert.Equal(OtpType.Totp, uri.Type);
+            Assert.Equal("Microsoft", uri.Issuer);
+            Assert.Equal("Microsoft", uri.IssuerParameter);
+            Assert.Equal("Petrsnd.Org", uri.IssuerLabel);
+            Assert.Equal("test2fa@petrsnd.org", uri.Account);
+            Assert.Equal("cskm2nmg5cvbcjzx", uri.Secret);
+            Assert.Equal(6, uri.Digits);
+            Assert.Equal(30, uri.Period);
+            Assert.Equal(OtpHmacAlgorithm.HmacSha1, uri.Algorithm);
+            Assert.True(UriComparer.AreEqual(uri.ToString(), uriString));
+        }
+
+        [Fact]
+        public void CommonAuthenticatorsTwilioAuthy()
+        {
+            // Twilio / Authy Authenticator
+            var uriString = "";
+            // var uri = new OtpAuthUri(uriString);
+            // Assert.NotNull(uri);
+            // Assert.Equal(OtpType.Totp, uri.Type);
+            // Assert.Equal("ACME?Co=192.168.1.1:8080", uri.Issuer);
+            // Assert.Equal("αccount", uri.Account);
+            // Assert.Equal("AE", uri.Secret);
+            // Assert.Equal(6, uri.Digits);
+            // Assert.Equal(30, uri.Period);
+            // Assert.Equal(OtpHmacAlgorithm.HmacSha1, uri.Algorithm);
+            // Assert.True(UriComparer.AreEqual(uri.ToString(), uriString));
+        }
+
+
+        [Fact]
+        public void CommonAuthenticatorsOktaGoogleAuthenticator()
+        {
+            // Okta Verify Authenticator uses the oktaverify:// uri scheme
+            // Okta Google Authenticator uses the otpauth:// uri scheme
+            var uriString = "otpauth://totp/dev-46457303.okta.com:dan.peterson%40oneidentity.com?secret=453T5PHSNTYJ4YEK&issuer=dev-46457303.okta.com";
+            var uri = new OtpAuthUri(uriString);
+            Assert.NotNull(uri);
+            Assert.Equal(OtpType.Totp, uri.Type);
+            Assert.Equal("dev-46457303.okta.com", uri.Issuer);
+            Assert.Equal("dan.peterson@oneidentity.com", uri.Account);
+            Assert.Equal("453T5PHSNTYJ4YEK", uri.Secret);
+            Assert.Equal(6, uri.Digits);
+            Assert.Equal(30, uri.Period);
+            Assert.Equal(OtpHmacAlgorithm.HmacSha1, uri.Algorithm);
+            Assert.True(UriComparer.AreEqual(uri.ToString(), uriString));
+        }
+
+        [Fact]
+        public void CommonAuthenticatorsFreeOtp()
+        {
+            // FreeOtp Authenticator by default recommends FreeIPA
+            // FreeIPA OTP Authenticator
+            var uriString = "otpauth://totp/employee@DEMO1.FREEIPA.ORG:Phone%20Authenticator?issuer=employee%40DEMO1.FREEIPA.ORG&secret=ASDFASDFASDFASDF&digits=6&algorithm=SHA1&period=30";
+            var uri = new OtpAuthUri(uriString);
+            Assert.NotNull(uri);
+            Assert.Equal(OtpType.Totp, uri.Type);
+            Assert.Equal("employee@DEMO1.FREEIPA.ORG", uri.Issuer);
+            Assert.Equal("Phone Authenticator", uri.Account);
+            Assert.Equal("ASDFASDFASDFASDF", uri.Secret);
+            Assert.Equal(6, uri.Digits);
+            Assert.Equal(30, uri.Period);
+            Assert.Equal(OtpHmacAlgorithm.HmacSha1, uri.Algorithm);
+            Assert.True(UriComparer.AreEqual(uri.ToString(), uriString));
+        }
+
+        [Fact]
+        public void CommonAuthenticatorsOneLoginAuthenticator()
+        {
+            // OneLogin Protect uses onelogin-otpauth uri scheme
+            // OneLogin Authenticator uses otpauth:// uri scheme
+            var uriString = "otpauth://totp/dan.peterson@oneidentity.com?secret=Z7CYH2IRBE7P73A2J7FFS7VHZHNCEPQL&issuer=OneLogin";
+            var uri = new OtpAuthUri(uriString);
+            Assert.NotNull(uri);
+            Assert.Equal(OtpType.Totp, uri.Type);
+            Assert.Equal("OneLogin", uri.Issuer);
+            Assert.Equal("dan.peterson@oneidentity.com", uri.Account);
+            Assert.Equal("Z7CYH2IRBE7P73A2J7FFS7VHZHNCEPQL", uri.Secret);
+            Assert.Equal(6, uri.Digits);
+            Assert.Equal(30, uri.Period);
+            Assert.Equal(OtpHmacAlgorithm.HmacSha1, uri.Algorithm);
             Assert.True(UriComparer.AreEqual(uri.ToString(), uriString));
         }
     }
