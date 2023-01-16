@@ -77,7 +77,7 @@ namespace Petrsnd.OtpCore
                 throw new ArgumentException("URI must contain a label after the authority", nameof(uri));
             if (Uri.Segments[0] != "/")
                 throw new ArgumentException("URI is missing separator between authority and label", nameof(uri));
-            Label = HttpUtility.UrlDecode(Uri.Segments[1]);
+            Label = Uri.UnescapeDataString(Uri.Segments[1]);
             if (Label.Contains(":"))
             {
                 var split = Label.Split(new[] { ':' }, 2);
