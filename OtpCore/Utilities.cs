@@ -21,14 +21,17 @@ namespace Petrsnd.OtpCore
                 case OtpHmacAlgorithm.HmacSha512:
                     return "SHA512";
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(algorithm), algorithm, null);
+                    throw new ArgumentOutOfRangeException(nameof(algorithm), algorithm, "No such hash algorithm");
             }
         }
 
         public static byte[] CounterToBuffer(long counter)
         {
+            if (counter < 0)
+                throw new ArgumentOutOfRangeException(nameof(counter), counter,
+                    "Counter is a signed integer but must not be negative");
             var counterBytes = new List<byte>();
-            while (counter != 0)
+            while (counter > 0)
             {
                 counterBytes.Add((byte)(counter & 0xff));
                 counter >>= 8;

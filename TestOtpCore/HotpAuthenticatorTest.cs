@@ -89,6 +89,18 @@ namespace Petrsnd.OtpCore.Test
         }
 
         [Fact]
+        public void RolloverTest()
+        {
+            var authenticator =
+                Hotp.GetAuthenticator(
+                    $"otpauth://hotp/NOBODY:petrsnd@gmail.com?issuer=NOBODY&secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&algorithm=SHA1&digits=6&counter={long.MaxValue}");
+            Assert.Throws<Exception>(() =>
+            {
+                authenticator.IncrementCounter();
+            });
+        }
+
+        [Fact]
         public void SetCounter()
         {
             var authenticator =
