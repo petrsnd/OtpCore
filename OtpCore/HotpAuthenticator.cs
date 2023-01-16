@@ -33,11 +33,15 @@ namespace Petrsnd.OtpCore
         {
             if (_uri.Counter == null)
                 throw new Exception("Counter was not set");
+            if (_uri.Counter.Value + 1 < 0)
+                throw new Exception("Incrementing counter resulted in roll over to negative number");
             SetCounter(_uri.Counter.Value + 1);
         }
 
         public void SetCounter(long counter)
         {
+            if (counter < 0)
+                throw new ArgumentException("Counter must not be negative", nameof(counter));
             // Side effect -- modifies the underlying URI and previous formatting is overridden
             _uri = new OtpAuthUri(OtpType.Hotp, _uri.SecretBuf, _uri.Account, _uri.Issuer, counter, _uri.Algorithm,
                 _uri.Digits);
