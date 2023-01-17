@@ -36,10 +36,9 @@ section 10.
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageReleaseNotes>
-- Initial release of library with HOTP and TOTP
-- Added support for authenticators in key URI format
-- Added getters for non-secret properties from authenticator object
-- Fetch multiple codes with one call
+- Tested against more 2FA provider URIs to ensure compatibility
+- Added a test tool for generating QR codes
+- Fixed some library and parsing bugs
     </PackageReleaseNotes>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
   </PropertyGroup>
