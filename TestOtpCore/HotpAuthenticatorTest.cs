@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Encodings.Web;
 using Xunit;
 
 namespace Petrsnd.OtpCore.Test
@@ -12,12 +13,11 @@ namespace Petrsnd.OtpCore.Test
                 "otpauth://totp/NOBODY:petrsnd@gmail.com?issuer=NOBODY&secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZA&algorithm=SHA256&digits=8"));
             Assert.Throws<ArgumentException>(() => Hotp.GetAuthenticator(
                 "otpauth://hotp/NOBODY:petrsnd@gmail.com?issuer=NOBODY&secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZA&algorithm=SHA256&digits=8"));
-            var authenticator =
-                Hotp.GetAuthenticator(
-                    "otpauth://hotp/NOBODY:petrsnd@gmail.com?issuer=NOBODY&secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZA&algorithm=SHA256&digits=8&counter=12");
-            Assert.Equal(
-                "otpauth://hotp/NOBODY:petrsnd@gmail.com?issuer=NOBODY&secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZA&algorithm=SHA256&digits=8&counter=12",
-                authenticator.ToString());
+            var uriString =
+                "otpauth://hotp/NOBODY:petrsnd@gmail.com?issuer=NOBODY&secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZA&algorithm=SHA256&digits=8&counter=12";
+            var authenticator = 
+                Hotp.GetAuthenticator(uriString);
+            Assert.True(UriComparer.AreEqual(authenticator.ToString(), uriString));
             Assert.NotNull(authenticator.GetCode());
             Assert.NotEmpty(authenticator.GetCode());
             Assert.NotEmpty(authenticator.GetSequence(10));
@@ -26,12 +26,11 @@ namespace Petrsnd.OtpCore.Test
         [Fact]
         public void GetCode()
         {
+            var uriString =
+                "otpauth://hotp/NOBODY:petrsnd@gmail.com?issuer=NOBODY&secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&algorithm=SHA1&digits=6&counter=0";
             var authenticator =
-                Hotp.GetAuthenticator(
-                    "otpauth://hotp/NOBODY:petrsnd@gmail.com?issuer=NOBODY&secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&algorithm=SHA1&digits=6&counter=0");
-            Assert.Equal(
-                "otpauth://hotp/NOBODY:petrsnd@gmail.com?issuer=NOBODY&secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&algorithm=SHA1&digits=6&counter=0",
-                authenticator.ToString());
+                Hotp.GetAuthenticator(uriString);
+            Assert.True(UriComparer.AreEqual(authenticator.ToString(), uriString));
             Assert.Equal("755224", authenticator.GetCode());
         }
 
@@ -59,9 +58,9 @@ namespace Petrsnd.OtpCore.Test
         [Fact]
         public void IncrementCounter()
         {
-            var authenticator =
-                Hotp.GetAuthenticator(
-                    "otpauth://hotp/NOBODY:petrsnd@gmail.com?issuer=NOBODY&secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&algorithm=SHA1&digits=6&counter=0");
+            var uriString =
+                "otpauth://hotp/NOBODY:petrsnd@gmail.com?issuer=NOBODY&secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&algorithm=SHA1&digits=6&counter=0";
+            var authenticator = Hotp.GetAuthenticator(uriString);
 
             Assert.Equal("755224", authenticator.GetCode());
             authenticator.IncrementCounter();
@@ -83,9 +82,9 @@ namespace Petrsnd.OtpCore.Test
             authenticator.IncrementCounter();
             Assert.Equal("520489", authenticator.GetCode());
             authenticator.IncrementCounter();
-
-            Assert.Equal("otpauth://hotp/NOBODY:petrsnd@gmail.com?secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&issuer=NOBODY&algorithm=SHA1&counter=10&digits=6",
-                authenticator.ToString());
+            uriString =
+                "otpauth://hotp/NOBODY:petrsnd@gmail.com?secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&issuer=NOBODY&algorithm=SHA1&counter=10&digits=6";
+            Assert.True(UriComparer.AreEqual(authenticator.ToString(), uriString));
         }
 
         [Fact]
@@ -103,16 +102,18 @@ namespace Petrsnd.OtpCore.Test
         [Fact]
         public void SetCounter()
         {
+            var uriString =
+                "otpauth://hotp/NOBODY:petrsnd@gmail.com?issuer=NOBODY&secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&algorithm=SHA1&digits=6&counter=0";
             var authenticator =
-                Hotp.GetAuthenticator(
-                    "otpauth://hotp/NOBODY:petrsnd@gmail.com?issuer=NOBODY&secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&algorithm=SHA1&digits=6&counter=0");
+                Hotp.GetAuthenticator(uriString);
 
             Assert.Equal("755224", authenticator.GetCode());
             authenticator.SetCounter(9);
             Assert.Equal("520489", authenticator.GetCode());
 
-            Assert.Equal("otpauth://hotp/NOBODY:petrsnd@gmail.com?secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&issuer=NOBODY&algorithm=SHA1&counter=9&digits=6",
-                authenticator.ToString());
+            uriString =
+                "otpauth://hotp/NOBODY:petrsnd@gmail.com?secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&issuer=NOBODY&algorithm=SHA1&counter=9&digits=6";
+            Assert.True(UriComparer.AreEqual(authenticator.ToString(), uriString));
         }
     }
 }

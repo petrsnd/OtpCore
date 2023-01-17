@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Web;
 
 namespace Petrsnd.OtpCore
@@ -13,6 +14,8 @@ namespace Petrsnd.OtpCore
                 throw new ArgumentException("Account must be specified", nameof(account));
             if (secret == null || secret.Length == 0)
                 throw new ArgumentException("Secret must not be empty or null", nameof(secret));
+            if (type != OtpType.Hotp && type != OtpType.Totp)
+                throw new ArgumentException("OTP type must be hotp or totp", nameof(type));
             Type = type;
             Account = account;
             Secret = Utilities.Base32Encode(secret);
@@ -22,15 +25,17 @@ namespace Petrsnd.OtpCore
             string uriString;
             if (!string.IsNullOrEmpty(issuer))
             {
-                Issuer = issuer;
+                IssuerLabel = issuer;
+                IssuerParameter = issuer;
                 Label = $"{Issuer}:{Account}";
                 uriString =
-                    $"otpauth://{Type.ToString().ToLower()}/{Label}?secret={Secret}&issuer={Issuer}&algorithm={Utilities.OtpHmacAlgorithmToString(Algorithm)}";
+                    $"otpauth://{Type.ToString().ToLower()}/{Uri.EscapeDataString(Label)}?secret={Secret}&issuer={Issuer}&algorithm={Utilities.OtpHmacAlgorithmToString(Algorithm)}";
             }
             else
             {
                 Label = Account;
-                uriString = $"otpauth://{Type.ToString().ToLower()}/{Label}?secret={Secret}&algorithm={Utilities.OtpHmacAlgorithmToString(Algorithm)}";
+                uriString =
+                    $"otpauth://{Type.ToString().ToLower()}/{Uri.EscapeDataString(Label)}?secret={Secret}&algorithm={Utilities.OtpHmacAlgorithmToString(Algorithm)}";
             }
             
             if (Type == OtpType.Hotp)
@@ -76,12 +81,13 @@ namespace Petrsnd.OtpCore
                 throw new ArgumentException("URI must contain a label after the authority", nameof(uri));
             if (Uri.Segments[0] != "/")
                 throw new ArgumentException("URI is missing separator between authority and label", nameof(uri));
-            Label = HttpUtility.UrlDecode(Uri.Segments[1]);
+            Label = Uri.UnescapeDataString(Uri.Segments[1]);
             if (Label.Contains(":"))
             {
-                var split = Label.Split(new[] { ':' }, 2, StringSplitOptions.RemoveEmptyEntries);
-                Issuer = split[0];
-                Account = split[1];
+                var split = Label.Split(new[] { ':' }, 2);
+                IssuerLabel = split[0];
+                Account = split[1].TrimStart(' ');
+                SavedSpaces = new string(' ', split[1].Length - Account.Length);
             }
             else
             {
@@ -96,6 +102,26 @@ namespace Petrsnd.OtpCore
                 Parameters[key.ToString().ToLower()] = nameValues[key.ToString()];
             }
 
+            if (IssuerLabel != null && (IssuerLabel.Contains(":") || Account.Contains(":")))
+            {
+                if (!Parameters.ContainsKey("issuer"))
+                {
+                    throw new ArgumentException(
+                        "URI label issuer and account may not contain colons, unless issuer parameter is present",
+                        nameof(uri));
+                }
+                if (!Label.StartsWith(Parameters["issuer"] + ":"))
+                {
+                    throw new ArgumentException(
+                        "URI label issuer and account may not contain colons, unless issuer parameter matches issuer in label",
+                        nameof(uri));
+                }
+
+                IssuerLabel = Parameters["issuer"];
+                IssuerParameter = IssuerLabel;
+                Account = Label.Substring(Parameters["issuer"].Length + 1);
+            }
+
             if (!Parameters.ContainsKey("secret"))
                 throw new ArgumentException("URI must contain a parameter called 'secret'", nameof(uri));
             Secret = Parameters["secret"];
@@ -105,14 +131,7 @@ namespace Petrsnd.OtpCore
 
             if (Parameters.ContainsKey("issuer"))
             {
-                if (string.IsNullOrEmpty(Issuer))
-                    Issuer = Parameters["issuer"];
-                else
-                {
-                    if (string.Compare(Issuer, Parameters["issuer"], StringComparison.Ordinal) != 0)
-                        throw new ArgumentException("URI issuer from label must match issuer from query string",
-                            nameof(uri));
-                }
+                IssuerParameter = Parameters["issuer"];
             }
 
             if (Parameters.ContainsKey("algorithm"))
@@ -166,16 +185,52 @@ namespace Petrsnd.OtpCore
 
         public override string ToString()
         {
-            return Uri.ToString();
+            // Microsoft URI ToString support is not great.  By default, Uri.ToString() method only escapes some characters:
+            // "The unescaped canonical representation of the Uri instance. All characters are unescaped except #, ?, and %."
+            // see https://learn.microsoft.com/en-us/dotnet/api/system.uri.tostring
+            // In order to get an example from the spec to pass unit tests, I have had to manually rebuild the string representation.
+            //   Also,
+            // HttpUtility.UrlEncode adds + for spaces (weird)
+            var sb = new StringBuilder("otpauth://");
+            sb.Append(Type.ToString().ToLower());
+            sb.Append("/");
+            if (!string.IsNullOrEmpty(IssuerLabel))
+            {
+                sb.Append(Uri.EscapeDataString(IssuerLabel));
+                sb.Append(":");
+            }
+            if (!string.IsNullOrEmpty(SavedSpaces))
+                sb.Append(Uri.EscapeDataString(SavedSpaces));
+            sb.Append(Uri.EscapeDataString(Account));
+            sb.Append(Uri.Query);
+            return sb.ToString();
         }
 
         public Uri Uri { get; }
 
         public OtpType Type { get; }
         public string Label { get; }
-        public string Issuer { get; }
+
+        public string IssuerLabel { get; }
+        public string IssuerParameter { get; }
+
+        public string Issuer
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(IssuerParameter))
+                    return IssuerParameter;
+                if (!string.IsNullOrEmpty(IssuerLabel))
+                    return IssuerLabel;
+                return null;
+                
+            }
+        }
+
         public string Account { get; }
-        
+
+        private string SavedSpaces { get; }
+
         public string Secret { get; }
         public byte[] SecretBuf => Utilities.Base32Decode(Secret);
 
