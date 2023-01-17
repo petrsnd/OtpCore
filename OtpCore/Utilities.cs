@@ -27,18 +27,9 @@ namespace Petrsnd.OtpCore
 
         public static byte[] CounterToBuffer(long counter)
         {
-            if (counter < 0)
-                throw new ArgumentOutOfRangeException(nameof(counter), counter,
-                    "Counter is a signed integer but must not be negative");
-            var counterBytes = new List<byte>();
-            while (counter > 0)
-            {
-                counterBytes.Add((byte)(counter & 0xff));
-                counter >>= 8;
-            }
-            while (counterBytes.Count < 8)
-                counterBytes.Add(0);
-            counterBytes.Reverse();
+            var counterBytes = BitConverter.GetBytes(counter);
+            if (BitConverter.IsLittleEndian)
+                return counterBytes.Reverse().ToArray();
             return counterBytes.ToArray();
         }
 

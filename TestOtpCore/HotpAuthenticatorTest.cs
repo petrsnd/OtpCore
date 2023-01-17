@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text.Encodings.Web;
 using Xunit;
 
@@ -88,15 +89,17 @@ namespace Petrsnd.OtpCore.Test
         }
 
         [Fact]
-        public void RolloverTest()
+        public void IncrementCounterNoOverflow()
         {
-            var authenticator =
-                Hotp.GetAuthenticator(
-                    $"otpauth://hotp/NOBODY:petrsnd@gmail.com?issuer=NOBODY&secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&algorithm=SHA1&digits=6&counter={long.MaxValue}");
-            Assert.Throws<Exception>(() =>
-            {
-                authenticator.IncrementCounter();
-            });
+            var uriString =
+                $"otpauth://hotp/NOBODY:petrsnd@gmail.com?issuer=NOBODY&secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ&algorithm=SHA1&digits=6&counter={long.MaxValue}";
+            var authenticator = Hotp.GetAuthenticator(uriString);
+            Assert.Equal(long.MaxValue, authenticator.Counter);
+            authenticator.IncrementCounter();
+            var expected = new byte[] { 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+            if (BitConverter.IsLittleEndian)
+                expected = expected.Reverse().ToArray();
+            Assert.Equal(BitConverter.ToInt64(expected), authenticator.Counter);
         }
 
         [Fact]

@@ -21,11 +21,7 @@ namespace Petrsnd.OtpCore.Test
             Assert.Equal(new byte[] { 0x00, 0x00, 0x00, 0x00, 0x27, 0xBC, 0x86, 0xAA }, Utilities.CounterToBuffer(666666666));
             // Additional value larger than 32-bits
             Assert.Equal(new byte[] { 0x00, 0x00, 0x00, 0x05, 0x2D, 0xC7, 0x47, 0xB1 }, Utilities.CounterToBuffer(22242871217));
-
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
-            {
-                Utilities.CounterToBuffer(-1000);
-            });
+            Assert.Equal(new byte[] { 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, Utilities.CounterToBuffer(unchecked(long.MaxValue + 1)));
         }
 
         [Fact]
