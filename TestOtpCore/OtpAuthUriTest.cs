@@ -300,17 +300,17 @@ namespace Petrsnd.OtpCore.Test
         public void CommonAuthenticatorsTwilioAuthy()
         {
             // Twilio / Authy Authenticator
-            var uriString = "";
-            // var uri = new OtpAuthUri(uriString);
-            // Assert.NotNull(uri);
-            // Assert.Equal(OtpType.Totp, uri.Type);
-            // Assert.Equal("ACME?Co=192.168.1.1:8080", uri.Issuer);
-            // Assert.Equal("αccount", uri.Account);
-            // Assert.Equal("AE", uri.Secret);
-            // Assert.Equal(6, uri.Digits);
-            // Assert.Equal(30, uri.Period);
-            // Assert.Equal(OtpHmacAlgorithm.HmacSha1, uri.Algorithm);
-            // Assert.True(UriComparer.AreEqual(uri.ToString(), uriString));
+            var uriString = "otpauth://totp/Twilio?secret=RT2RNP2OZUFISNOOPNM7T3YK5ZOD76FE4DB2MNFGIE7C6N4Y6SJQ&issuer=Twilio";
+            var uri = new OtpAuthUri(uriString);
+            Assert.NotNull(uri);
+            Assert.Equal(OtpType.Totp, uri.Type);
+            Assert.Equal("Twilio", uri.Issuer);
+            Assert.Equal("Twilio", uri.Account);
+            Assert.Equal("RT2RNP2OZUFISNOOPNM7T3YK5ZOD76FE4DB2MNFGIE7C6N4Y6SJQ", uri.Secret);
+            Assert.Equal(6, uri.Digits);
+            Assert.Equal(30, uri.Period);
+            Assert.Equal(OtpHmacAlgorithm.HmacSha1, uri.Algorithm);
+            Assert.True(UriComparer.AreEqual(uri.ToString(), uriString));
         }
 
 
