@@ -39,6 +39,7 @@ section 10.
 - Tested against more 2FA provider URIs to ensure compatibility
 - Added a test tool for generating QR codes
 - Fixed some library and parsing bugs
+- Fixed Issuer encoding and period allowable range
     </PackageReleaseNotes>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
   </PropertyGroup>
