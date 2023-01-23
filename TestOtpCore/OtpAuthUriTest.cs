@@ -367,5 +367,27 @@ namespace Petrsnd.OtpCore.Test
             Assert.Equal(OtpHmacAlgorithm.HmacSha1, uri.Algorithm);
             Assert.True(UriComparer.AreEqual(uri.ToString(), uriString));
         }
+
+        [Fact]
+        public void Issue16()
+        {
+            var secret = new byte[] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07 };
+            var account = "myAccount";
+            var issuer = "ACME & Co";
+
+            var otp = new OtpAuthUri(OtpType.Totp, secret, account, issuer);
+
+            Assert.Equal(account, otp.Account);
+            Assert.Equal(issuer, otp.Issuer);
+            var expected = "otpauth://totp/ACME%20%26%20Co:myAccount?secret=AAAQEAYEAUDAO&issuer=ACME%20%26%20Co&algorithm=SHA1&period=30&digits=6";
+            Assert.True(UriComparer.AreEqual(expected, otp.ToString()));
+
+            var newOtp = new OtpAuthUri(otp.ToString());
+
+            Assert.Equal(otp.Account, newOtp.Account);
+            Assert.Equal(otp.Issuer, newOtp.Issuer);
+
+            Assert.True(UriComparer.AreEqual(otp.ToString(), newOtp.ToString()));
+        }
     }
 }

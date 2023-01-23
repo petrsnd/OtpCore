@@ -29,13 +29,15 @@ namespace Petrsnd.OtpCore
                 IssuerParameter = issuer;
                 Label = $"{Issuer}:{Account}";
                 uriString =
-                    $"otpauth://{Type.ToString().ToLower()}/{Uri.EscapeDataString(Label)}?secret={Secret}&issuer={Issuer}&algorithm={Utilities.OtpHmacAlgorithmToString(Algorithm)}";
+                    $"otpauth://{Type.ToString().ToLower()}/{Uri.EscapeDataString(Label)}" +
+                    $"?secret={Secret}&issuer={Uri.EscapeDataString(Issuer)}&algorithm={Utilities.OtpHmacAlgorithmToString(Algorithm)}";
             }
             else
             {
                 Label = Account;
                 uriString =
-                    $"otpauth://{Type.ToString().ToLower()}/{Uri.EscapeDataString(Label)}?secret={Secret}&algorithm={Utilities.OtpHmacAlgorithmToString(Algorithm)}";
+                    $"otpauth://{Type.ToString().ToLower()}/{Uri.EscapeDataString(Label)}" +
+                    $"?secret={Secret}&algorithm={Utilities.OtpHmacAlgorithmToString(Algorithm)}";
             }
             
             if (Type == OtpType.Hotp)
@@ -45,6 +47,9 @@ namespace Petrsnd.OtpCore
             }
             else if (Type == OtpType.Totp)
             {
+                if (counterOrPeriod < 1 || counterOrPeriod > 3600)
+                    throw new ArgumentOutOfRangeException(nameof(counterOrPeriod),
+                        "TOTP period, or time step, must be between 1 second and 1 hour");
                 Period = (int)counterOrPeriod;
                 uriString += $"&period={Period}&digits={Digits}";
             }
@@ -153,11 +158,11 @@ namespace Petrsnd.OtpCore
                     throw new ArgumentException("URI digits query parameter must be numeric", nameof(uri));
                 Digits = digits;
                 if (Digits < 6 || Digits > 8)
-                    throw new ArgumentException("URI digits query parameter must be between 6 and 8");
+                    throw new ArgumentException("URI digits query parameter must be between 6 and 8", nameof(uri));
             }
 
             if (Type == OtpType.Hotp && !Parameters.ContainsKey("counter"))
-                throw new ArgumentException("URI of type 'hotp' must contain 'counter' query parameter");
+                throw new ArgumentException("URI of type 'hotp' must contain 'counter' query parameter", nameof(uri));
             if (Parameters.ContainsKey("counter"))
             {
                 if (!long.TryParse(Parameters["counter"], out var counter))
@@ -166,11 +171,15 @@ namespace Petrsnd.OtpCore
             }
 
             if (Type == OtpType.Hotp && Parameters.ContainsKey("period"))
-                throw new ArgumentException("URI of type 'hotp' must not contain 'period' query parameter");
+                throw new ArgumentException("URI of type 'hotp' must not contain 'period' query parameter",
+                    nameof(uri));
             if (Parameters.ContainsKey("period"))
             {
                 if (!int.TryParse(Parameters["period"], out var period))
                     throw new ArgumentException("URI digits query parameter must be numeric", nameof(uri));
+                if (period < 1 || period > 3600)
+                    throw new ArgumentException("TOTP period, or time step, must be between 1 second and 1 hour",
+                        nameof(uri));
                 Period = period;
             }
 
