@@ -8,8 +8,8 @@ namespace Petrsnd.OtpCore
         public static string GetTotpCode(byte[] secret, long unixTime, int period, OtpHmacAlgorithm algorithm, int digits)
         {
             if (period < 1 || period > 3600)
-                throw new ArgumentOutOfRangeException("TOTP period, or time step, must be between 1 second and 1 hour",
-                    nameof(period));
+                throw new ArgumentOutOfRangeException(nameof(period),
+                    "TOTP period, or time step, must be between 1 second and 1 hour");
             var counter = unixTime / period;
             return Hotp.GetHotpCode(secret, counter, algorithm, digits);
         }
@@ -23,6 +23,9 @@ namespace Petrsnd.OtpCore
         public static TotpValue[] GetTotpRange(byte[] secret, long unixTime, int rangeSeconds, int period,
             OtpHmacAlgorithm algorithm, int digits)
         {
+            if (period < 1 || period > 3600)
+                throw new ArgumentOutOfRangeException(nameof(period),
+                    "TOTP period, or time step, must be between 1 second and 1 hour");
             var totpValues = new List<TotpValue>();
             for (var i = unixTime; i <= unixTime + rangeSeconds; i += period)
             {

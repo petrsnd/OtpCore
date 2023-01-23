@@ -20,6 +20,22 @@ namespace Petrsnd.OtpCore.Test
         }
 
         [Fact]
+        public void TotpAuthenticatorPeriodZero()
+        {
+            var uriString =
+                "otpauth://totp/NOBODY:petrsnd@gmail.com?issuer=NOBODY&secret=GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZA&period=0";
+            Assert.Throws<ArgumentException>(() => Totp.GetAuthenticator(uriString));
+            Assert.Throws<ArgumentException>(() => new OtpAuthUri(uriString));
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+                new OtpAuthUri(OtpType.Totp, new byte[] { 0x00 }, "petrsnd@gmail.com", "NOBODY", 0));
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+                Totp.GetTotpCode(new byte[] { 0x00 }, DateTimeOffset.Now, 0, OtpHmacAlgorithm.HmacSha1, 6));
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+                Totp.GetTotpRange(new byte[] { 0x00 }, DateTimeOffset.Now, TimeSpan.FromMinutes(3), 0,
+                    OtpHmacAlgorithm.HmacSha1, 6));
+        }
+
+        [Fact]
         public void GetCode()
         {
             var uriString =
