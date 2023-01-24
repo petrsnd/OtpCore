@@ -101,6 +101,9 @@ namespace Petrsnd.OtpCore
             var nameValues = HttpUtility.ParseQueryString(Uri.Query);
             foreach (var key in nameValues.Keys)
             {
+                if (key == null)
+                    throw new ArgumentException("URI parameter string is malformed.");
+
                 Parameters[key.ToString().ToLower()] = nameValues[key.ToString()];
             }
 
