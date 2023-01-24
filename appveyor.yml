@@ -3,6 +3,9 @@ version: 1.2.0-dev-{build}
 branches:
   only:
   - main
+skip_commits:
+  files:
+    - README.md
 image: Visual Studio 2022
 configuration: Release
 before_build:
