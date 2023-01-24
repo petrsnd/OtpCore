@@ -261,6 +261,13 @@ namespace Petrsnd.OtpCore.Test
         }
 
         [Fact]
+        public void GitHubIssueNo22()
+        {
+            // missing params should throw.
+            Assert.Throws<ArgumentException>(() => new OtpAuthUri("otpauth://totp/Test?&issuer=Test"));
+        }
+
+        [Fact]
         public void CommonAuthenticatorsGoogle()
         {
             // Google Authenticator Sample
