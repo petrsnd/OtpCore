@@ -9,7 +9,7 @@ if (Test-Path .\artifacts)
 }
 
 Write-Host "prebuild: Setting version numbers"
-# TacacsPlusCore
+# OtpCore
 $ProjectFile = (Join-Path $PSScriptRoot "OtpCore\OtpCore.csproj")
 
 $PackageCodeMarker = "9999.9999.9999"
@@ -22,7 +22,7 @@ if (($PackageVersion.Split("-"))[1] -eq "release")
 }
 $AssemblyVersion = "$(($PackageVersion.Split("-"))[0]).0"
 
-# TacacsPlusCore
+# OtpCore
 (Get-Content $ProjectFile -Raw).replace($AssemblyCodeMarker, $AssemblyVersion) | Set-Content -Encoding UTF8 $ProjectFile
 (Get-Content $ProjectFile -Raw).replace($PackageCodeMarker, $PackageVersion) | Set-Content -Encoding UTF8 $ProjectFile
 
