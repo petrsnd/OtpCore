@@ -130,7 +130,7 @@ var secret = Encoding.ASCII.GetBytes("12345678901234567890");
 long counter = 0;
 int sequenceLength = 5; // next 5 codes
 int digits = 6;
-var hotpValues = Hotp.GetHotpCode(secret, counter, sequenceLength, OtpHmacAlgorithm.HmacSha1, digits));
+var hotpValues = Hotp.GetHotpSequence(secret, counter, sequenceLength, OtpHmacAlgorithm.HmacSha1, digits));
 
 // Totp
 int period = 30;
