@@ -176,7 +176,7 @@ namespace Petrsnd.OtpCore
             if (Parameters.ContainsKey("period"))
             {
                 if (!int.TryParse(Parameters["period"], out var period))
-                    throw new ArgumentException("URI digits query parameter must be numeric", nameof(uri));
+                    throw new ArgumentException("URI period query parameter must be numeric", nameof(uri));
                 if (period < 1 || period > 3600)
                     throw new ArgumentException("TOTP period, or time step, must be between 1 second and 1 hour",
                         nameof(uri));
