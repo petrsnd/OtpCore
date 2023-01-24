@@ -1,5 +1,5 @@
 [![Build status](https://img.shields.io/appveyor/build/petrsnd/OtpCore)](https://ci.appveyor.com/project/petrsnd/otpcore)
-[![nuget](https://img.shields.io/nuget/vpre/OtpCore)](https://www.nuget.org/packages/OtpCore)
+[![nuget](https://img.shields.io/nuget/v/OtpCore)](https://www.nuget.org/packages/OtpCore)
 [![License](https://img.shields.io/github/license/petrsnd/OtpCore)](https://github.com/petrnsd/OtpCore/blob/master/LICENSE)
 
 
