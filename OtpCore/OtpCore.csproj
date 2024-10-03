@@ -28,6 +28,7 @@ using the standard alphabet from section 6, and has been tested against the test
 section 10.
     </Description>
     <PackageProjectUrl>https://github.com/petrsnd/OtpCore</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/petrsnd/OtpCore</RepositoryUrl>
     <PackageIcon>Content\images\OTP.png</PackageIcon>
     <PackageTags>mfa;2fa;htop;totp;base32;csharp;netstandard;dotnet-standard</PackageTags>
@@ -45,12 +46,13 @@ section 10.
 
   <ItemGroup>
     <None Include="..\OTP.png" Link="OTP.png" Pack="true" PackagePath="Content\images\" />
+    <None Include="..\README.md" Pack="true" PackagePath="\"/>
   </ItemGroup>
 
   <ItemGroup>
     <None Include="..\LICENSE">
       <Pack>True</Pack>
-      <PackagePath></PackagePath>
+      <PackagePath/>
     </None>
   </ItemGroup>
 
