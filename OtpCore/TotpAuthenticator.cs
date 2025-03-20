@@ -23,7 +23,7 @@ namespace Petrsnd.OtpCore
         public string Account => _uri.Account;
         public OtpHmacAlgorithm Algorithm => _uri.Algorithm;
         public int Digits => _uri.Digits;
-        public int Period => _uri.Period.Value;
+        public int Period => _uri.Period ?? 30;
 
         public override string ToString()
         {
