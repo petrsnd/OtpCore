@@ -22,7 +22,7 @@ namespace Petrsnd.OtpCore
         public string Issuer => _uri.Issuer;
         public string Account => _uri.Account;
         public OtpHmacAlgorithm Algorithm => _uri.Algorithm;
-        public long Counter => _uri.Counter.Value;
+        public long Counter => _uri.Counter ?? 0;
 
         public override string ToString()
         {
