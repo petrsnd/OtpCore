@@ -37,9 +37,9 @@ section 10.
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageReleaseNotes>
-- Tested against more 2FA provider URIs to ensure compatibility
-- Added a test tool for generating QR codes
-- Fixed some library and parsing bugs
+- Updated Nuget packages
+- Updated QR test tool to .NET 8
+- Fixed minor code analysis issues
     </PackageReleaseNotes>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
   </PropertyGroup>
